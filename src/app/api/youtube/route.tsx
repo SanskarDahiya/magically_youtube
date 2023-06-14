@@ -2,10 +2,15 @@ import { type NextRequest } from 'next/server'
 import { _getTime, _updateTime, getClientDb } from '@/components/getMongoDb'
 import oauth2Client from '@/components/getGoogleAuth'
 import { google } from 'googleapis'
+import { googleServiceList } from '@/components/youtubeInterface'
+
 export async function POST(request: NextRequest) {
   try {
     const res = await request.json()
-    if (!res?.email) {
+    let yt_service =
+      (googleServiceList.includes(res?.yt_service) && res.yt_service) ||
+      'channel'
+    if (!res?.email || !res?.yt_query) {
       throw new Error('Invalid Request')
     }
     const db = await getClientDb()
@@ -20,21 +25,29 @@ export async function POST(request: NextRequest) {
     if (!existingUserResult) {
       throw new Error('Invalid User')
     }
-    const accessToken = (existingUserResult.tokens.token_type +
-      ' ' +
-      existingUserResult.tokens.access_token) as string
-    const refreshToken = existingUserResult.tokens.refresh_token
+    // const accessToken = (existingUserResult.tokens.token_type +
+    //   ' ' +
+    //   existingUserResult.tokens.access_token) as string
+    // const refreshToken = existingUserResult.tokens.refresh_token
 
     oauth2Client.credentials = existingUserResult.tokens
     var service = google.youtube('v3')
-    const response = await service.channels.list({
+
+    // @ts-ignore
+    if (!service[yt_service]) {
+      yt_service = 'channel'
+    }
+
+    // @ts-ignore
+    const response = await service[yt_service].list({
+      ...res?.yt_query,
       auth: oauth2Client,
-      part: ['id'],
-      mine: true,
-      // forUsername: 'GoogleDevelopers',
     })
 
-    console.log('🚀 ~ file: route.tsx:29 ~ POST ~ response:', response)
+    console.log(
+      '🚀 ~ file: route.tsx:29 ~ POST ~ response:',
+      JSON.stringify({ yt_query: res?.yt_query, resp: response.data })
+    )
     return new Response(JSON.stringify(response.data))
   } catch (err: any) {
     console.log('🚀 ~ file: route.tsx:32 ~ POST ~ err:', err)
@@ -50,8 +63,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-
-// curl --request GET \
-//   // --url 'https://www.googleapis.com/youtube/v3/channels?part=id&mine=true' \
-//   // --header 'Accept: application/json' \
-//   // --header 'Authorization: Bearer ya29.a0AWY7Ckm_W3W1xPDALVTDjOGTnYUge_71JalzUGKfh-U1HviJLJwDnL2_cdUp7THx49BFTBy0h0tbON6XTgFWfL-5AmFznNaaOQ6h2ztigbcEx0q_C61aRJsXNyUGx_32LcK59b-SElVdChqXO8sQPRfuRTpYaCgYKAZsSARESFQG1tDrpTc13JmDJmIArVnZs_kcpnQ0163'
