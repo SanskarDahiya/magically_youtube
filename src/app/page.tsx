@@ -1,19 +1,14 @@
 'use client'
-import React from 'react'
-import YoutubeComWrapper from '@/components/YoutubeComWrapper'
+import LoginModal from '@/components/LoginButton'
 import useUserStore from '@/store/UserStore'
+import React from 'react'
 
 const YTCall = () => {
   const user = useUserStore((s) => s.user)
   return (
-    <div
-      className="p-2 m-2 h-full min-h-[50vh] border border-black border-solid"
-      style={{
-        cursor: user ? 'auto' : 'not-allowed',
-        opacity: user ? 1 : 0.5,
-      }}
-    >
-      <YoutubeComWrapper />
+    <div className="p-2 m-2 h-full min-h-[50vh]">
+      <LoginModal />
+      {user && 'Thank you for login.'}
     </div>
   )
 }
