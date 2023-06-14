@@ -41,7 +41,7 @@ const fetchInfo = () => {
   }
 }
 
-export const YTCall = () => {
+const YTCall = () => {
   const { data, isLoading, error, __trigger } = fetchInfo()
   return (
     <div className="my-4">
