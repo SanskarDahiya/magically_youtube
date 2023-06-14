@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useGoogleLogin } from '@react-oauth/google'
 import useUserStore from '@/store/UserStore'
 import { fetchInfo } from './customFetchButton'
-
+// Checking scope at backend
+const scope_arr = ['https://www.googleapis.com/auth/youtube.readonly']
 const LoginModal = () => {
   const { data, isLoading, error, __trigger } = fetchInfo()
   const { user, setUser } = useUserStore()
@@ -21,12 +22,14 @@ const LoginModal = () => {
       if (response?.success === true) {
         setUser(response.user)
         localStorage.setItem('user_email', response.user)
+      } else if (response.message === 'Youtube access is not provided') {
+        alert('Youtube access is not provided')
       }
     },
     onError: () => {
       console.log('Login Failed')
     },
-    scope: ['https://www.googleapis.com/auth/youtube.readonly'].join(', '),
+    scope: scope_arr.join(', '),
     flow: 'auth-code',
   })
 
@@ -107,7 +110,7 @@ const LoginModal = () => {
           </div>
         )}
       </button>
-      {JSON.stringify({ data, error, isLoading })}
+      {error && JSON.stringify(error?.message || error)}
     </div>
   )
 }

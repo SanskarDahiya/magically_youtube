@@ -95,7 +95,7 @@ const YoutubeComWrapper = ({
         )}
       </button>
 
-      {error && JSON.stringify({ error, isLoading })}
+      {error && JSON.stringify(error?.message || error)}
 
       {data && (
         <div>

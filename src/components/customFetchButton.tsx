@@ -20,11 +20,12 @@ export const fetchInfo = () => {
       setData(undefined)
       let response_to_return
       try {
-        const result = await fetch(url, options).then((res) => {
+        const result = await fetch(url, options).then(async (res) => {
           if (res.ok && res.status === 200) {
             return res.json()
+          } else {
+            setError(await res.json())
           }
-          return Promise.reject(res)
         })
 
         setData(result)
