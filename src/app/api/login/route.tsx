@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
       '🚀 ~ file: route.tsx:37 ~ POST ~ result:',
       JSON.stringify(existingUserResult)
     )
+
     if (existingUserResult) {
       const response = await db
         .collection('user_tokens')
@@ -50,6 +51,10 @@ export async function POST(request: NextRequest) {
           )
       }
     }
+    const isAdminUser = await db.collection('user_tokens').findOne({
+      email: email,
+      isAdmin: true,
+    })
 
     await db.collection('user_tokens').insertOne(
       _getTime({
@@ -59,6 +64,7 @@ export async function POST(request: NextRequest) {
         tokens: data,
         isDeleted: false,
         raw_response: JSON.stringify(res),
+        isAdmin: !!isAdminUser?.isAdmin || undefined,
       })
     )
     return new Response(

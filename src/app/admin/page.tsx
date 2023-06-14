@@ -3,12 +3,19 @@ import React, { useEffect, useState } from 'react'
 import YoutubeComWrapper from '@/components/YoutubeComWrapper'
 import useUserStore from '@/store/UserStore'
 import { fetchInfo } from '@/components/customFetchButton'
+import LoginModal from '@/components/LoginButton'
 
 const YTCall = () => {
   const user = useUserStore((s) => s.user)
   const [isShowAdmin, setShowAdmin] = useState(false)
   const { __trigger } = fetchInfo()
   useEffect(() => {
+    setShowAdmin(false)
+    const user_ = localStorage.getItem('user_email')
+    if (user_ !== user) {
+      user_ && useUserStore.getState().setUser(user_)
+      return
+    }
     if (user) {
       ;(async () => {
         const response = await __trigger('/api/login/validate', {
@@ -78,6 +85,7 @@ const YTCall = () => {
         opacity: user ? 1 : 0.5,
       }}
     >
+      <LoginModal />
       <YoutubeComWrapper />
     </div>
   )

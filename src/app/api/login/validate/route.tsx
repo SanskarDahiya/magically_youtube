@@ -16,7 +16,12 @@ export async function POST(request: NextRequest) {
     if (!existingUserResult) {
       throw new Error('Invalid User')
     }
-    return new Response(JSON.stringify({ success: true }))
+    return new Response(
+      JSON.stringify({
+        success: true,
+        isAdmin: existingUserResult?.isAdmin || undefined,
+      })
+    )
   } catch (err: any) {
     return new Response(
       JSON.stringify({
