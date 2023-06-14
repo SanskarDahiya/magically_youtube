@@ -158,6 +158,8 @@ export default function () {
   const [channelId, setChannelId] = useState('')
   return (
     <div className="flex justify-between">
+      {/* https://developers.google.com/youtube/v3/docs/ */}
+      {/* Use this api to see yt_service * yt_query for respected params */}
       <YoutubeComWrapper
         value={channelId}
         setValue={setChannelId}
