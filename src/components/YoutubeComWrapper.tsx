@@ -162,6 +162,7 @@ export default function () {
         value={channelId}
         setValue={setChannelId}
         isActive
+        yt_service="channels"
         buttonText="Fetch Channel List"
         yt_query={{
           part: ['id'],
@@ -170,6 +171,7 @@ export default function () {
       />
       <YoutubeComWrapper
         isActive={!!channelId}
+        yt_service="channels"
         buttonText="Get Stats"
         yt_query={{
           part: ['statistics'],
