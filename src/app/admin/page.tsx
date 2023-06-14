@@ -85,7 +85,7 @@ const YTCall = () => {
         opacity: user ? 1 : 0.5,
       }}
     >
-      <LoginModal />
+      <LoginModal isAdmin={isShowAdmin} />
       <YoutubeComWrapper />
     </div>
   )
