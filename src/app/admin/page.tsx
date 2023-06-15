@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from 'react'
 import YoutubeComWrapper from '@/components/YoutubeComWrapper'
 import useUserStore from '@/store/UserStore'
-import { fetchInfo } from '@/components/customFetchButton'
+import { useCustomFetch } from '@/components/customFetchButton'
 import LoginModal from '@/components/LoginButton'
 
 const YTCall = () => {
   const user = useUserStore((s) => s.user)
   const [isShowAdmin, setShowAdmin] = useState(false)
-  const { __trigger } = fetchInfo()
+  const { __trigger } = useCustomFetch()
   useEffect(() => {
     setShowAdmin(false)
     const user_ = localStorage.getItem('user_email')

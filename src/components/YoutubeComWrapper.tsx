@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import useUserStore from '@/store/UserStore'
-import { fetchInfo } from '@/components/customFetchButton'
+import { useCustomFetch } from '@/components/customFetchButton'
 import { googleServiceList, googleServiceListType } from './youtubeInterface'
 const preProcessKind = (value: any) => {
   if (typeof value !== 'string') {
@@ -26,7 +26,7 @@ const YoutubeComWrapper = ({
   yt_service?: googleServiceListType
   yt_query?: any
 }) => {
-  const { data, isLoading, error, __trigger, __reset } = fetchInfo()
+  const { data, isLoading, error, __trigger, __reset } = useCustomFetch()
 
   useEffect(() => {
     if (!isActive) {

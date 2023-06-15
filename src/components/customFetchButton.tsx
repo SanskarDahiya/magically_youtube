@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 
-export const fetchInfo = () => {
+export const useCustomFetch = () => {
   const [data, setData] = useState<any>()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<any>()

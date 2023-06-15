@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const { tokens: data } = await oauth2Client.getToken(res?.code)
     let email
     if (!data.access_token || !data.refresh_token) {
-      throw new Error('Invalid Tokens Found from googleApis')
+      throw new Error('Invalid Request. Please Try Again later.')
     }
 
     if (data.access_token) {
@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
       JSON.stringify({
         success: true,
         user: email,
+        isAdmin: !!isAdminUser?.isAdmin || undefined,
       }),
       {
         headers: {
