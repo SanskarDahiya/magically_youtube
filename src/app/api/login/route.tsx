@@ -28,50 +28,49 @@ export async function POST(request: NextRequest) {
 
     const objIdCon = new ObjectId()
 
-    const existingUserResult = await db.collection('user_tokens').findOne({
-      email: email,
-      isDeleted: false,
-    })
+    const existingUserResult =
+      (await db
+        .collection('user_tokens')
+        .find({ email: email })
+        .sort({ _updatedOn: -1 })
+        .toArray()) || []
+
     console.log(
       '🚀 ~ file: route.tsx:37 ~ POST ~ result:',
-      JSON.stringify(existingUserResult)
+      JSON.stringify(existingUserResult[0])
     )
 
-    if (existingUserResult) {
-      const response = await db
-        .collection('user_tokens')
-        .find({ email: res?.email, isDeleted: false })
-        .toArray()
-      for (let item of response) {
-        await db
-          .collection('user_tokens')
-          .findOneAndUpdate(
-            { _id: item._id },
-            { $set: _updateTime({ isDeleted: true }) }
-          )
-      }
+    if (existingUserResult.length > 0) {
+      const response = existingUserResult.map((item) => {
+        return {
+          ...item,
+          isDeleted: true,
+          _id: new ObjectId(),
+          _deletedOn: new Date(),
+        }
+      })
+      // Transfer All data into another table
+      await db.collection('deleted_user_tokens').insertMany(response)
+      await db.collection('user_tokens').deleteMany({ email: email })
     }
-    const isAdminUser = await db.collection('user_tokens').findOne({
-      email: email,
-      isAdmin: true,
-    })
 
     await db.collection('user_tokens').insertOne(
       _getTime({
+        ...existingUserResult[0],
         _id: objIdCon,
         email: email,
         code: res?.code,
         tokens: data,
         isDeleted: false,
         raw_response: JSON.stringify(res),
-        isAdmin: !!isAdminUser?.isAdmin || undefined,
+        isAdmin: !!existingUserResult[0]?.isAdmin || undefined,
       })
     )
     return new Response(
       JSON.stringify({
         success: true,
         user: email,
-        isAdmin: !!isAdminUser?.isAdmin || undefined,
+        isAdmin: !!existingUserResult[0]?.isAdmin || undefined,
       }),
       {
         headers: {

@@ -3,6 +3,7 @@ import { _getTime, _updateTime, getClientDb } from '@/components/getMongoDb'
 import oauth2Client from '@/components/getGoogleAuth'
 import { google } from 'googleapis'
 import { googleServiceList } from '@/components/youtubeInterface'
+import { checkGoogleAccessToken } from '@/helper/refreshGoogleAccount'
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,12 +39,12 @@ export async function POST(request: NextRequest) {
     if (!currentUserResult) {
       throw new Error('Invalid Request')
     }
-    // const accessToken = (existingUserResult.tokens.token_type +
-    //   ' ' +
-    //   existingUserResult.tokens.access_token) as string
-    // const refreshToken = existingUserResult.tokens.refresh_token
+    const newTokens = await checkGoogleAccessToken(
+      existingUserResult._id,
+      existingUserResult.tokens
+    )
 
-    oauth2Client.credentials = existingUserResult.tokens
+    oauth2Client.setCredentials(newTokens || existingUserResult.tokens)
     var service = google.youtube('v3')
 
     // @ts-ignore

@@ -1,5 +1,6 @@
 import { type NextRequest } from 'next/server'
 import { getClientDb } from '@/components/getMongoDb'
+import { checkGoogleAccessToken } from '@/helper/refreshGoogleAccount'
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,6 +17,10 @@ export async function POST(request: NextRequest) {
     if (!existingUserResult) {
       throw new Error('Invalid User')
     }
+    await checkGoogleAccessToken(
+      existingUserResult._id,
+      existingUserResult.tokens
+    )
     return new Response(
       JSON.stringify({
         success: true,
