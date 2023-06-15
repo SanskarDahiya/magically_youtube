@@ -2,16 +2,16 @@
 
 import React, { useEffect } from 'react'
 import { useGoogleLogin } from '@react-oauth/google'
-import useUserStore from '@/store/UserStore'
+import useAppStore from '@/store/UserStore'
 import { useCustomFetch } from './customFetchButton'
 import { Dialog, Transition } from '@headlessui/react'
 
 // Checking scope at backend
 const scope_arr = ['https://www.googleapis.com/auth/youtube.readonly']
 
-const LoginModal = ({ isAdmin }: { isAdmin?: boolean }) => {
+const LoginModal = () => {
   const { data, isLoading, error, __trigger, __reset } = useCustomFetch()
-  const { user, setUser, setIsAdmin } = useUserStore()
+  const { user, setUser, setIsAdmin } = useAppStore()
 
   const login = useGoogleLogin({
     onSuccess: async (codeResponse) => {

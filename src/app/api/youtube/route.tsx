@@ -13,17 +13,30 @@ export async function POST(request: NextRequest) {
     if (!res?.email || !res?.yt_query) {
       throw new Error('Invalid Request')
     }
+    const searchUser = res.searchUser || res.email
     const db = await getClientDb()
     const existingUserResult = await db.collection('user_tokens').findOne({
-      email: res?.email,
-      isDeleted: false,
+      email: searchUser,
     })
     console.log(
       '🚀 ~ file: route.tsx:17 ~ POST ~ existingUserResult:',
       existingUserResult
     )
     if (!existingUserResult) {
-      throw new Error('Invalid User')
+      throw new Error('Invalid User Id Searched')
+    }
+
+    const currentUserResult = await db.collection('user_tokens').findOne({
+      email: res?.email,
+      isDeleted: false,
+      isAdmin: true,
+    })
+    console.log(
+      '🚀 ~ file: route.tsx:17 ~ POST ~ currentUserResult:',
+      currentUserResult
+    )
+    if (!currentUserResult) {
+      throw new Error('Invalid Request')
     }
     // const accessToken = (existingUserResult.tokens.token_type +
     //   ' ' +

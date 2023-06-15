@@ -10,16 +10,14 @@ import {
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import useUserStore from '@/store/UserStore'
+import useAppStore from '@/store/UserStore'
 import LoginModal from './LoginButton'
 import { useCustomFetch } from './customFetchButton'
 
 const NavBar = () => {
   const navBarHeight = 71
   const { __trigger } = useCustomFetch()
-  const isAdmin = useUserStore((s) => s.isAdmin)
-  const user = useUserStore((s) => s.user)
-  const setUser = useUserStore((s) => s.setUser)
+  const { isAdmin, searchUser, setSearchUser, user, setUser } = useAppStore()
 
   const logout = async () => {
     await __trigger('/api/login/unregister', {
@@ -42,8 +40,12 @@ const NavBar = () => {
         {isAdmin ? (
           <>
             <input
-              type="text"
-              className="lg:w-1/3 border border-r-0 border-gray-300 rounded-none rounded-l-md font-light focus:ring-0 focus:border-indigo-500"
+              type="email"
+              defaultValue={searchUser || ''}
+              onChange={(e) => {
+                setSearchUser((e.target.value || '').trim() || null)
+              }}
+              className="lg:w-1/2 border border-r-0 border-gray-300 rounded-none rounded-l-md font-light focus:ring-0 focus:border-indigo-500"
               placeholder="Search..."
             />
             <button className="px-3 rounded-none rounded-r-md bg-indigo-600 hover:bg-indigo-700 text-indigo-200 focus:outline-none">

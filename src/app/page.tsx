@@ -1,10 +1,10 @@
 'use client'
-import useUserStore from '@/store/UserStore'
+import useAppStore from '@/store/UserStore'
 import React from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
 const HomePage = () => {
-  const user = useUserStore((s) => s.user)
+  const user = useAppStore((s) => s.user)
   if (!user) {
     return null
   }

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import useUserStore from '@/store/UserStore'
+import useAppStore from '@/store/UserStore'
 import { useCustomFetch } from '@/components/customFetchButton'
 import { googleServiceList, googleServiceListType } from './youtubeInterface'
 const preProcessKind = (value: any) => {
@@ -44,7 +44,7 @@ const YoutubeComWrapper = ({
         className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded relative"
         onClick={async () => {
           if (isLoading) return
-          const email = useUserStore.getState().user
+          const email = useAppStore.getState().user
           if (!email || !yt_query) {
             alert('Invalid Action')
             return
@@ -55,6 +55,7 @@ const YoutubeComWrapper = ({
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+              searchUser: useAppStore.getState().searchUser || email,
               email: email,
               yt_query: yt_query,
               yt_service,
