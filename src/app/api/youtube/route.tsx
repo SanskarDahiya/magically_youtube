@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     })
     console.log(
       '🚀 ~ file: route.tsx:17 ~ POST ~ existingUserResult:',
-      existingUserResult
+      JSON.stringify(existingUserResult)
     )
     if (!existingUserResult) {
       throw new Error('Invalid User Id Searched')
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     })
     console.log(
       '🚀 ~ file: route.tsx:17 ~ POST ~ currentUserResult:',
-      currentUserResult
+      JSON.stringify(currentUserResult)
     )
     if (!currentUserResult) {
       throw new Error('Invalid Request')

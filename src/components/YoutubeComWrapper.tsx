@@ -15,12 +15,14 @@ const YoutubeComWrapper = ({
   isActive,
   value,
   setValue,
+  statsCall,
   buttonText,
   yt_service,
   yt_query,
 }: {
   isActive?: boolean
   value?: any
+  statsCall?: boolean
   setValue?: any
   buttonText?: string
   yt_service?: googleServiceListType
@@ -35,7 +37,7 @@ const YoutubeComWrapper = ({
   }, [isActive])
   return (
     <div
-      className="max-w-[30%] flex-1 overflow-scroll border border-red-600 border-solid"
+      className="w-full flex-1 overflow-scroll"
       style={{
         opacity: isActive ? 1 : 0.5,
       }}
@@ -111,34 +113,84 @@ const YoutubeComWrapper = ({
           {Array.isArray(data.items) && data.items.length > 0 ? (
             <div>
               {data.items.map((item: any, _: number) => {
+                const thisId = item?.id?.videoId || item?.id
                 return (
                   <React.Fragment key={_}>
-                    {item?.statistics ? (
-                      <div className="flex break-all cursor-pointer">
-                        {JSON.stringify(item?.statistics)}
+                    {statsCall ? (
+                      <div className="break-all cursor-pointer">
+                        {typeof item?.statistics?.subscriberCount !==
+                        'undefined' ? (
+                          <span>
+                            subscriberCount:{item?.statistics?.subscriberCount}
+                            <br />
+                          </span>
+                        ) : null}
+                        {typeof item?.statistics?.videoCount !== 'undefined' ? (
+                          <span>
+                            Videos:{item?.statistics?.videoCount}
+                            <br />
+                          </span>
+                        ) : null}
+                        {typeof item?.statistics?.viewCount !== 'undefined' ? (
+                          <span>
+                            viewCount:{item?.statistics?.viewCount}
+                            <br />
+                          </span>
+                        ) : null}
+                        {typeof item?.statistics?.commentCount !==
+                        'undefined' ? (
+                          <span>
+                            commentCount:{item?.statistics?.commentCount}
+                            <br />
+                          </span>
+                        ) : null}
+                        {typeof item?.statistics?.dislikeCount !==
+                        'undefined' ? (
+                          <span>
+                            dislikeCount:{item?.statistics?.dislikeCount}
+                            <br />
+                          </span>
+                        ) : null}
+                        {typeof item?.statistics?.likeCount !== 'undefined' ? (
+                          <span>
+                            likeCount:{item?.statistics?.likeCount}
+                            <br />
+                          </span>
+                        ) : null}
+                        {typeof item?.statistics?.favoriteCount !==
+                        'undefined' ? (
+                          <span>
+                            favoriteCount:{item?.statistics?.favoriteCount}
+                            <br />
+                          </span>
+                        ) : null}
                       </div>
                     ) : (
                       <div
-                        className="flex break-all cursor-pointer"
+                        className="flex break-all cursor-pointer px-1 py-2"
                         onClick={() => {
                           setValue((x: string) => {
-                            if (x === item.id) {
+                            if (x === thisId) {
                               return ''
                             }
-                            return item.id
+                            return thisId
                           })
                         }}
                       >
                         <input
                           type="radio"
                           name="test"
-                          checked={value === item.id}
+                          checked={value === thisId}
                           onChange={() => {
-                            setValue(item.id)
+                            setValue(thisId)
                           }}
                         />
                         <div className="ml-1">
-                          {preProcessKind(item.kind) + ':' + item?.id}
+                          {preProcessKind(item.kind) + ':'}
+                          <br />
+                          {item?.snippet?.customUrl ||
+                            item?.snippet?.title ||
+                            thisId}
                         </div>
                       </div>
                     )}
@@ -156,42 +208,73 @@ const YoutubeComWrapper = ({
 }
 
 export default function () {
-  const [channelId, setChannelId] = useState('')
+  const [_channelId, setChannelId] = useState('')
+  const [_videoId, setVideoId] = useState('')
+  const videoId = (typeof _videoId === 'string' && _videoId.trim()) || ''
+  const channelId = (typeof _channelId === 'string' && _channelId.trim()) || ''
   return (
-    <div className="flex justify-between">
-      {/* https://developers.google.com/youtube/v3/docs/ */}
-      {/* Use this api to see yt_service * yt_query for respected params */}
-      <YoutubeComWrapper
-        value={channelId}
-        setValue={setChannelId}
-        isActive
-        yt_service="channels"
-        buttonText="Fetch Channel List"
-        yt_query={{
-          part: ['id'],
-          mine: true,
-        }}
-      />
-      <YoutubeComWrapper
-        isActive={!!channelId}
-        yt_service="channels"
-        buttonText="Get Stats"
-        yt_query={{
-          part: ['statistics'],
-          id: [channelId],
-        }}
-      />
-      <YoutubeComWrapper
-        isActive={!!channelId}
-        buttonText="Get Live Video List"
-        yt_service="search"
-        yt_query={{
-          part: ['snippet'],
-          eventType: 'live',
-          type: 'video',
-          channelId: channelId,
-        }}
-      />
-    </div>
+    <>
+      <div className="flex justify-between min-h-[20vh] mb-4">
+        {/* https://developers.google.com/youtube/v3/docs/ */}
+        {/* Use this api to see yt_service * yt_query for respected params */}
+        <YoutubeComWrapper
+          value={channelId}
+          setValue={setChannelId}
+          isActive
+          yt_service="channels"
+          buttonText="Fetch Channel List"
+          yt_query={{
+            part: ['id', 'snippet'],
+            mine: true,
+          }}
+        />
+        <YoutubeComWrapper
+          isActive={!!channelId}
+          yt_service="channels"
+          buttonText="Get Stats"
+          statsCall
+          yt_query={{
+            part: ['statistics'],
+            id: [channelId],
+          }}
+        />
+        <YoutubeComWrapper
+          isActive={!!channelId}
+          buttonText="Get Live Video List"
+          yt_service="search"
+          yt_query={{
+            part: ['snippet'],
+            eventType: 'live',
+            type: 'video',
+            channelId: channelId,
+          }}
+        />
+      </div>
+      <div className="flex justify-between">
+        <YoutubeComWrapper
+          value={videoId}
+          setValue={setVideoId}
+          isActive={!!channelId}
+          yt_service="search"
+          buttonText="Fetch Video List"
+          yt_query={{
+            channelId: channelId,
+            part: ['snippet'],
+            type: 'video',
+          }}
+        />
+        <YoutubeComWrapper
+          isActive={!!channelId && !!videoId}
+          buttonText="Video Stat"
+          yt_service="videos"
+          statsCall
+          yt_query={{
+            id: videoId,
+            part: ['statistics', 'snippet'],
+            type: 'video',
+          }}
+        />
+      </div>
+    </>
   )
 }

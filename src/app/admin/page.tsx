@@ -1,11 +1,15 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import YoutubeComWrapper from '@/components/YoutubeComWrapper'
 import useAppStore from '@/store/UserStore'
-import { useCustomFetch } from '@/components/customFetchButton'
 
 const AdminPageComponent = () => {
   const isAdmin = useAppStore((s) => s.isAdmin && s.user)
+  const user = useAppStore((s) => s.user)
+
+  if (!user) {
+    return null
+  }
 
   if (!isAdmin) {
     return (
@@ -22,7 +26,7 @@ const AdminPageComponent = () => {
   }
   return (
     <div
-      className="p-2 m-2 h-full min-h-[50vh] border border-black border-solid"
+      className="p-2 m-2 h-full min-h-[50vh]"
       style={{
         cursor: isAdmin ? 'auto' : 'not-allowed',
         opacity: isAdmin ? 1 : 0.5,
