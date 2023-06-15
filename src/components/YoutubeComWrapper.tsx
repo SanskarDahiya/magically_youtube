@@ -238,7 +238,7 @@ export default function () {
             id: [channelId],
           }}
         />
-        <YoutubeComWrapper
+        {/* <YoutubeComWrapper
           isActive={!!channelId}
           buttonText="Get Live Video List"
           yt_service="search"
@@ -248,7 +248,7 @@ export default function () {
             type: 'video',
             channelId: channelId,
           }}
-        />
+        /> */}
       </div>
       <div className="flex justify-between">
         <YoutubeComWrapper
@@ -256,10 +256,11 @@ export default function () {
           setValue={setVideoId}
           isActive={!!channelId}
           yt_service="search"
-          buttonText="Fetch Video List"
+          buttonText="Fetch Live Video List"
           yt_query={{
             channelId: channelId,
             part: ['snippet'],
+            eventType: 'live',
             type: 'video',
           }}
         />
