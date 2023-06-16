@@ -7,7 +7,11 @@ import { useCustomFetch } from './customFetchButton'
 import { Dialog, Transition } from '@headlessui/react'
 
 // Checking scope at backend
-const scope_arr = ['https://www.googleapis.com/auth/youtube.readonly']
+const scope_arr = [
+  // 'https://www.googleapis.com/auth/youtube.readonly',
+  'https://www.googleapis.com/auth/yt-analytics.readonly',
+  // 'https://www.googleapis.com/auth/yt-analytics-monetary.readonly',
+]
 
 const LoginModal = () => {
   const { data, isLoading, error, __trigger, __reset } = useCustomFetch()

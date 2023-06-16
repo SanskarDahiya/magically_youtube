@@ -21,10 +21,19 @@ export async function POST(request: NextRequest) {
       const UserInfo = await oauth2Client.getTokenInfo(data.access_token)
       email = UserInfo.email
     }
-    if (data.scope?.search('youtube.readonly') === -1) {
-      throw new Error('Youtube access is not provided')
-      return
-    }
+
+    // if (data.scope?.search('youtube.readonly') === -1) {
+    //   throw new Error('Youtube access is not provided')
+    //   return
+    // }
+    // if (data.scope?.search('yt-analytics.readonly') === -1) {
+    //   throw new Error('Youtube access is not provided')
+    //   return
+    // }
+    // if (data.scope?.search('yt-analytics-monetary.readonly') === -1) {
+    //   throw new Error('Youtube access is not provided')
+    //   return
+    // }
 
     const objIdCon = new ObjectId()
 
