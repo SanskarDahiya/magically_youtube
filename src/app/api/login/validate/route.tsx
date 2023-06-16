@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     return new Response(
       JSON.stringify({
         success: true,
-        isAdmin: existingUserResult?.isAdmin || undefined,
+        isAdmin: !!existingUserResult?.isAdmin || undefined, // undefined removed entry from response
       })
     )
   } catch (err: any) {

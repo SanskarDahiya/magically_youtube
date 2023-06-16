@@ -63,14 +63,14 @@ export async function POST(request: NextRequest) {
         tokens: data,
         isDeleted: false,
         raw_response: JSON.stringify(res),
-        isAdmin: !!existingUserResult[0]?.isAdmin || undefined,
+        isAdmin: !!existingUserResult[0]?.isAdmin,
       })
     )
     return new Response(
       JSON.stringify({
         success: true,
         user: email,
-        isAdmin: !!existingUserResult[0]?.isAdmin || undefined,
+        isAdmin: !!existingUserResult[0]?.isAdmin || undefined, // undefined removed entry from response
       }),
       {
         headers: {

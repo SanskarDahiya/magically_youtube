@@ -1,9 +1,9 @@
 {
   "name": "magically_youtube",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 8000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
