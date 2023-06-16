@@ -4,6 +4,7 @@ import oauth2Client from '@/components/getGoogleAuth'
 import { google } from 'googleapis'
 import { checkGoogleAccessToken } from '@/helper/refreshGoogleAccount'
 
+// https://developers.google.com/youtube/analytics/metrics
 export async function POST(request: NextRequest) {
   try {
     const res = await request.json()
