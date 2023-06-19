@@ -1,0 +1,77 @@
+### Alpha 0.2
+
+obs: obs-ad-test.vercel.app/streamer/[username] from UserTable
+-- >> Manually need to assign username into UserTable
+
+
+Campain Table -> Campain details (60-> 15) -> StartDate -> EndDate
+ -> Pre/Post Campain Details
+
+User Table ->> ()
+
+
+(BannerVisible)Active Entry Table ->>  _id:Random + Values->: (user + campain + Yt Metric)
+filter: userID/campainId
+// db.find().where(user,"===",userEmail).where(campain,"===",campainId)
+
+Algo,
+60 sec
+1. recieve: Username,
+3. BannerVisible Insert Entry (
+    platform:"YT/LOCO",
+    obs:{// obsDetails
+        version:"",
+    },
+    eventFiredOn:"",
+    isActive:"",
+    username:username,
+    _createdOn:"",
+    _updatedOn:"",
+)
+4. YT API CALL with username & BannerVisible-> _Id
+5. Make YT API call & fetch details
+6. Update BannerVisible Entry to store info
+
+
+
+
+//************************************************************************************************
+obs/uuid("648acedd71893c6653c7b985")
+
+-> 60 sec Total
+-> 15 sec Ad Showed ->>
+-> Table-> {
+    active,time,
+    
+    _id -> new ID()
+
+    // YT->
+    view,stats, concurrentUser,
+} -> 15sec 
+
+
+
+Algo,
+60 sec
+1. recieve: Username,
+2. Fetch user details from userTable
+- Fetch campain details
+3. BannerVisible Inset Entry (
+    platform:"YT/LOCO",
+    obs:{// obsDetails
+        version:"",
+    },
+    eventFiredOn:"",
+    isActive:"",
+    campainId:"",
+    userId:_id,
+    username:username,
+    _createdOn:"",
+    _updatedOn:"",
+)
+4. YT API CALL with username & BannerVisible-> _Id
+- Or Add LOCO API CALL with username & BannerVisible-> _Id
+5. Make YT API call & fetch details
+6. Update BannerVisible Entry to store info
+
+

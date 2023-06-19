@@ -35,8 +35,6 @@ export async function POST(request: NextRequest) {
     //   return
     // }
 
-    const objIdCon = new ObjectId()
-
     const existingUserResult =
       (await db
         .collection('user_tokens')
@@ -66,7 +64,6 @@ export async function POST(request: NextRequest) {
     await db.collection('user_tokens').insertOne(
       _getTime({
         ...existingUserResult[0],
-        _id: objIdCon,
         email: email,
         code: res?.code,
         tokens: data,
