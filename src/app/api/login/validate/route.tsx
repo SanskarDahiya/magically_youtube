@@ -1,5 +1,5 @@
 import { type NextRequest } from 'next/server'
-import { getClientDb } from '@/components/getMongoDb'
+import { getUserTable } from '@/components/getMongoDb'
 import { checkGoogleAccessToken } from '@/helper/youtube_helper'
 
 export async function POST(request: NextRequest) {
@@ -9,18 +9,20 @@ export async function POST(request: NextRequest) {
     if (!res?.email) {
       throw new Error('Invalid Request')
     }
-    const db = await getClientDb()
-    const existingUserResult = await db.collection('user_tokens').findOne({
+    const userDb = await getUserTable()
+    const existingUserResult = await userDb.findOne({
       email: res?.email,
       isDeleted: false,
     })
     if (!existingUserResult) {
       throw new Error('Invalid User')
     }
-    await checkGoogleAccessToken(
-      existingUserResult._id,
-      existingUserResult.tokens
-    )
+    // No need to validate here
+    // IMP: Can do here as well
+    // await checkGoogleAccessToken(
+    //   existingUserResult._id,
+    //   existingUserResult.tokens
+    // )
     return new Response(
       JSON.stringify({
         success: true,

@@ -1,5 +1,10 @@
 import { type NextRequest } from 'next/server'
-import { _getTime, _updateTime, getClientDb } from '@/components/getMongoDb'
+import {
+  _getTime,
+  _updateTime,
+  getCampaignMappingTable,
+  getUserTable,
+} from '@/components/getMongoDb'
 import { fetchYTLiveStats } from '@/helper/youtube_helper'
 import { ObjectId } from 'mongodb'
 
@@ -16,11 +21,10 @@ export async function POST(request: NextRequest) {
     }
     // NaN is False
     const timestamp = new Date(WebTimeStamp).getTime() || new Date().getTime()
+    const userDb = await getUserTable()
+    const campaignMapDb = await getCampaignMappingTable()
 
-    const db = await getClientDb()
-    const user = await db
-      .collection('user_tokens')
-      .findOne({ username: streamerUsername })
+    const user = await userDb.findOne({ username: streamerUsername })
     if (!user) {
       throw new Error('Invalid Streamer')
     }
@@ -40,7 +44,7 @@ export async function POST(request: NextRequest) {
       yt_info: { channelIds, videoIds },
     }
 
-    await db.collection('campaign_details').insertOne(_getTime(DataToInsert))
+    await campaignMapDb.insertOne(_getTime(DataToInsert))
 
     return new Response(
       JSON.stringify({

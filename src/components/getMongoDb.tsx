@@ -54,6 +54,23 @@ export const getClientDb = async () => {
   return client.db('loco_test')
 }
 
+export const getUserTable = async () => {
+  const db = await getClientDb()
+  return db.collection('users_tokens')
+}
+export const getDeletedUserTable = async () => {
+  const db = await getClientDb()
+  return db.collection('deleted_user_tokens')
+}
+export const getCampaignTable = async () => {
+  const db = await getClientDb()
+  return db.collection('campaign_tokens')
+}
+export const getCampaignMappingTable = async () => {
+  const db = await getClientDb()
+  return db.collection('campaign_details')
+}
+
 export const _updateTime = (obj: any) => {
   return {
     ...obj,

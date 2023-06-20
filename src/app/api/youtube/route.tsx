@@ -1,5 +1,5 @@
 import { type NextRequest } from 'next/server'
-import { _getTime, _updateTime, getClientDb } from '@/components/getMongoDb'
+import { _getTime, _updateTime, getUserTable } from '@/components/getMongoDb'
 import youtubeDataV3 from '@/helper/youtubeDataV3'
 
 export async function POST(request: NextRequest) {
@@ -9,8 +9,8 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid Request')
     }
     const searchUser = res.searchUser || res.email
-    const db = await getClientDb()
-    const existingUserResult = await db.collection('user_tokens').findOne({
+    const userDb = await getUserTable()
+    const existingUserResult = await userDb.findOne({
       email: searchUser,
     })
     console.log(
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid User Id Searched')
     }
 
-    const currentUserResult = await db.collection('user_tokens').findOne({
+    const currentUserResult = await userDb.findOne({
       email: res?.email,
       isDeleted: false,
       isAdmin: true,

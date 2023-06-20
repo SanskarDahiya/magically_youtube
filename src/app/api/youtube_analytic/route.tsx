@@ -1,5 +1,5 @@
 import { type NextRequest } from 'next/server'
-import { _getTime, _updateTime, getClientDb } from '@/components/getMongoDb'
+import { _getTime, _updateTime, getUserTable } from '@/components/getMongoDb'
 import oauth2Client from '@/components/getGoogleAuth'
 import { google } from 'googleapis'
 import { checkGoogleAccessToken } from '@/helper/youtube_helper'
@@ -12,8 +12,8 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid Request')
     }
     const searchUser = res.searchUser || res.email
-    const db = await getClientDb()
-    const existingUserResult = await db.collection('user_tokens').findOne({
+    const userDb = await getUserTable()
+    const existingUserResult = await userDb.findOne({
       email: searchUser,
     })
     console.log(
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid User Id Searched')
     }
 
-    const currentUserResult = await db.collection('user_tokens').findOne({
+    const currentUserResult = await userDb.findOne({
       email: res?.email,
       isDeleted: false,
       isAdmin: true,
@@ -66,6 +66,52 @@ export async function POST(request: NextRequest) {
     //   }
     // }
 
+    // startDate: '2022-05-12',
+    // endDate: '2023-06-15',
+    // // metrics:
+    // //   'views,comments,likes,dislikes,estimatedMinutesWatched,averageViewDuration',
+    // // // access_token:
+    // // // // ids: 'channel==UC40mthd7vTS-rR0HqKjfVXA', // Replace with your channel ID
+    // // startDate: '2023-06-14',
+    // // endDate: '2023-06-20',
+
+    // metrics: [
+    //   'averageViewDuration',
+    //   'comments',
+    //   'dislikes',
+    //   'estimatedMinutesWatched',
+    //   // 'estimatedRevenue',
+    //   'likes',
+    //   // 'shares',
+    //   'subscribersGained',
+    //   // 'subscribersLost',
+    //   // 'viewerPercentage',
+    //   'views',
+    // ].join(','),
+    // // // 'views,likes,comments,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,subscribersGained',
+    // // // dimensions: 'video',
+    // // // // sort: 'day',
+    // // dimensions: 'day', //
+    // // //       ageGroup
+    // // // channel
+    // // // country
+    // // // day
+    // // // gender
+    // // // month
+    // // // sharingService
+    // // // uploaderType
+    // // // video
+    // // // filters: `video==0QoW8ywX1Pk`,
+    // // // filters: `video==sKiUO8EFiXs`,o19A0QnH8NY
+    // filters: `video==HrcPm-AOjQ8`, //o19A0QnH8NY
+    // // // ids: 'channel==UC40mthd7vTS-rR0HqKjfVXA',//UC2LojO_Rcwlf9rcJIuK-qNw
+    // // // ids: 'channel==UC2LojO_Rcwlf9rcJIuK-qNw', //channel==MINE
+    // // ids: 'channel==MINE', //
+    // // // metrics:
+    // // //   'views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,subscribersGained',
+    // // // dimensions: 'day',
+    // // sort: 'day',
+    // // // sort: 'video',
     // if (metrics.length === 0) {
     //   metrics = metrics.concat(valid_metrics)
     // }

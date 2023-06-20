@@ -1,5 +1,5 @@
 import { type NextRequest } from 'next/server'
-import { _getTime, _updateTime, getClientDb } from '@/components/getMongoDb'
+import { _getTime, _updateTime, getUserTable } from '@/components/getMongoDb'
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,24 +7,19 @@ export async function POST(request: NextRequest) {
     if (!res?.email) {
       throw new Error('Invalid Request')
     }
-    const db = await getClientDb()
-    const response = await db
-      .collection('user_tokens')
+    const userDb = await getUserTable()
+    const response = await userDb
       .find({ email: res?.email, isDeleted: false })
       .toArray()
+
     for (let item of response) {
-      await db
-        .collection('user_tokens')
-        .findOneAndUpdate(
-          { _id: item._id },
-          { $set: _updateTime({ isDeleted: true }) }
-        )
+      await userDb.findOneAndUpdate(
+        { _id: item._id },
+        { $set: _updateTime({ isDeleted: true }) }
+      )
     }
-    return new Response(
-      JSON.stringify({
-        success: true,
-      })
-    )
+
+    return new Response(JSON.stringify({ success: true }))
   } catch (err: any) {
     return new Response(
       JSON.stringify({

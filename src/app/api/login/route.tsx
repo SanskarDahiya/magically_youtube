@@ -1,5 +1,10 @@
 import { type NextRequest } from 'next/server'
-import { _getTime, _updateTime, getClientDb } from '@/components/getMongoDb'
+import {
+  _getTime,
+  _updateTime,
+  getDeletedUserTable,
+  getUserTable,
+} from '@/components/getMongoDb'
 import oauth2Client from '@/components/getGoogleAuth'
 import { ObjectId } from 'mongodb'
 
@@ -10,7 +15,7 @@ export async function POST(request: NextRequest) {
     if (!res?.code) {
       throw new Error('Invalid Code')
     }
-    const db = await getClientDb()
+    const userDb = await getUserTable()
     const { tokens: data } = await oauth2Client.getToken(res?.code)
     let email
     if (!data.access_token || !data.refresh_token) {
@@ -36,8 +41,7 @@ export async function POST(request: NextRequest) {
     // }
 
     const existingUserResult =
-      (await db
-        .collection('user_tokens')
+      (await userDb
         .find({ email: email })
         .sort({ _updatedOn: -1 })
         .toArray()) || []
@@ -56,12 +60,15 @@ export async function POST(request: NextRequest) {
           _deletedOn: new Date(),
         }
       })
-      // Transfer All data into another table
-      await db.collection('deleted_user_tokens').insertMany(response)
-      await db.collection('user_tokens').deleteMany({ email: email })
+      {
+        // Transfer All data into another table
+        const db = await getDeletedUserTable()
+        await db.insertMany(response)
+      }
+      await userDb.deleteMany({ email: email })
     }
 
-    await db.collection('user_tokens').insertOne(
+    await userDb.insertOne(
       _getTime({
         ...existingUserResult[0],
         email: email,
