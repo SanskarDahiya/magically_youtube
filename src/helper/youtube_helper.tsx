@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { Auth } from 'googleapis'
+import { Auth, youtube_v3 } from 'googleapis'
 import oauth2Client from '@/components/getGoogleAuth'
 import { _updateTime, getClientDb } from '@/components/getMongoDb'
 import youtubeDataV3 from './youtubeDataV3'
@@ -41,14 +41,47 @@ export const fetchYTLiveStats = async (user: any) => {
   const videoId = videoIds[0]
   let stats = null
   if (videoId) {
-    const liveVideoStats = await youtubeDataV3(user, {
+    const liveVideoStats = (await youtubeDataV3(user, {
       yt_query: {
         id: videoId,
-        part: ['id', 'liveStreamingDetails', 'statistics', 'snippet', 'status'],
+        part: [
+          'id',
+          'fileDetails',
+          'liveStreamingDetails',
+          'statistics',
+          'snippet',
+          'status',
+        ],
       },
       yt_service: 'videos',
-    })
-    stats = liveVideoStats.data
+    })) as { data: youtube_v3.Schema$VideoListResponse }
+
+    const videoItems =
+      (Array.isArray(liveVideoStats?.data?.items) &&
+        liveVideoStats?.data?.items) ||
+      []
+
+    const videoItem = videoItems[0]
+
+    const concurrentViewers = videoItem.liveStreamingDetails?.concurrentViewers
+    const commentCount = videoItem.statistics?.commentCount
+    const dislikeCount = videoItem.statistics?.dislikeCount
+    const favoriteCount = videoItem.statistics?.favoriteCount
+    const likeCount = videoItem.statistics?.likeCount
+    const viewCount = videoItem.statistics?.viewCount
+    stats = {
+      status: videoItem.status,
+      streamInfo: videoItem.snippet,
+      fileDetails: videoItem.fileDetails,
+      statistics: {
+        concurrentViewers: parseInt(concurrentViewers || '') || 0,
+        commentCount: parseInt(commentCount || '') || 0,
+        dislikeCount: parseInt(dislikeCount || '') || 0,
+        favoriteCount: parseInt(favoriteCount || '') || 0,
+        likeCount: parseInt(likeCount || '') || 0,
+        viewCount: parseInt(viewCount || '') || 0,
+      },
+    }
   }
 
   return {

@@ -26,14 +26,16 @@ export async function POST(request: NextRequest) {
     }
 
     const CampaignId = new ObjectId('6491795bdf1faef3505e512b') // loco-web-testing
+    // Later will be fetched from user collection
     const { isLive, stats, channelIds, videoIds } = await fetchYTLiveStats(user)
     const DataToInsert = {
-      request: JSON.stringify(responseBody),
       userId: user._id,
+      userEmail: user.email,
+      username: user.username,
       campaignId: CampaignId,
       isActive: isActive,
-      eventFiredOn: timestamp,
-      isLive: !!isLive,
+      eventFiredOn: new Date(timestamp),
+      isLiveVideoPresent: !!isLive,
       live_stats: stats,
       yt_info: { channelIds, videoIds },
     }
