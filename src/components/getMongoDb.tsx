@@ -56,7 +56,7 @@ export const getClientDb = async () => {
 
 export const getUserTable = async () => {
   const db = await getClientDb()
-  return db.collection('users_tokens')
+  return db.collection('user_tokens')
 }
 export const getDeletedUserTable = async () => {
   const db = await getClientDb()
