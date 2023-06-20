@@ -7,11 +7,11 @@ export async function POST(request: NextRequest) {
   try {
     const responseBody = await request.json()
     const {
-      email: streamerEmail,
+      username: streamerUsername,
       timestamp: WebTimeStamp,
       isActive,
     } = responseBody || {}
-    if (!streamerEmail) {
+    if (!streamerUsername) {
       throw new Error('Invalid Request')
     }
     // NaN is False
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const db = await getClientDb()
     const user = await db
       .collection('user_tokens')
-      .findOne({ email: responseBody?.email })
+      .findOne({ username: streamerUsername })
     if (!user) {
       throw new Error('Invalid Streamer')
     }
