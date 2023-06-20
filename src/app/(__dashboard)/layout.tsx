@@ -21,7 +21,7 @@ export default function AdminLayout({
         <div className="col-span-5 md:col-span-9 lg:col-span-8 h-full">
           <div className="relative">
             <NavBar />
-            <div className="overflow-y-auto h-screen flex flex-col bg-black">
+            <div className="overflow-y-auto h-screen flex flex-col">
               <div className="flex-shrink-0 p-5" style={{ marginTop: 72 }}>
                 {children}
               </div>
