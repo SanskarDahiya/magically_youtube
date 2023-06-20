@@ -1,6 +1,6 @@
 import { type NextRequest } from 'next/server'
 import { getClientDb } from '@/components/getMongoDb'
-import { checkGoogleAccessToken } from '@/helper/refreshGoogleAccount'
+import { checkGoogleAccessToken } from '@/helper/youtube_helper'
 
 export async function POST(request: NextRequest) {
   try {

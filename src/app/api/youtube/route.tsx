@@ -1,16 +1,10 @@
 import { type NextRequest } from 'next/server'
 import { _getTime, _updateTime, getClientDb } from '@/components/getMongoDb'
-import oauth2Client from '@/components/getGoogleAuth'
-import { google } from 'googleapis'
-import { googleServiceList } from '@/components/youtubeInterface'
-import { checkGoogleAccessToken } from '@/helper/refreshGoogleAccount'
+import youtubeDataV3 from '@/helper/youtubeDataV3'
 
 export async function POST(request: NextRequest) {
   try {
     const res = await request.json()
-    let yt_service =
-      (googleServiceList.includes(res?.yt_service) && res.yt_service) ||
-      'channel'
     if (!res?.email || !res?.yt_query) {
       throw new Error('Invalid Request')
     }
@@ -39,29 +33,13 @@ export async function POST(request: NextRequest) {
     if (!currentUserResult) {
       throw new Error('Invalid Request')
     }
-    const newTokens = await checkGoogleAccessToken(
-      existingUserResult._id,
-      existingUserResult.tokens
-    )
-
-    oauth2Client.setCredentials(newTokens || existingUserResult.tokens)
-    var service = google.youtube('v3')
 
     // @ts-ignore
-    if (!service[yt_service]) {
-      yt_service = 'channel'
-    }
-
-    // @ts-ignore
-    const response = await service[yt_service].list({
-      ...res?.yt_query,
-      auth: oauth2Client,
+    const response = await youtubeDataV3(existingUserResult, {
+      yt_query: res?.yt_query,
+      yt_service: res?.yt_service,
     })
 
-    console.log(
-      '🚀 ~ file: route.tsx:29 ~ POST ~ response:',
-      JSON.stringify({ yt_query: res?.yt_query, resp: response.data })
-    )
     return new Response(JSON.stringify(response.data))
   } catch (err: any) {
     console.log('🚀 ~ file: route.tsx:32 ~ POST ~ err:', err)

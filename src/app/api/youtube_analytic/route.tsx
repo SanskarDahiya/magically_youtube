@@ -2,7 +2,7 @@ import { type NextRequest } from 'next/server'
 import { _getTime, _updateTime, getClientDb } from '@/components/getMongoDb'
 import oauth2Client from '@/components/getGoogleAuth'
 import { google } from 'googleapis'
-import { checkGoogleAccessToken } from '@/helper/refreshGoogleAccount'
+import { checkGoogleAccessToken } from '@/helper/youtube_helper'
 
 // https://developers.google.com/youtube/analytics/metrics
 export async function POST(request: NextRequest) {
