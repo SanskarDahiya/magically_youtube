@@ -50,7 +50,6 @@ export const fetchYTLiveStats = async (user: any) => {
           id: videoId,
           part: [
             'id',
-            'fileDetails',
             'liveStreamingDetails',
             'statistics',
             'snippet',
@@ -77,7 +76,6 @@ export const fetchYTLiveStats = async (user: any) => {
       stats = {
         status: videoItem.status,
         streamInfo: videoItem.snippet,
-        fileDetails: videoItem.fileDetails,
         statistics: {
           concurrentViewers: parseInt(concurrentViewers || '') || 0,
           commentCount: parseInt(commentCount || '') || 0,
