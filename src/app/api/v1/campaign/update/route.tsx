@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid Streamer')
     }
 
-    const CampaignId = new ObjectId(162736353637)
+    const CampaignId = new ObjectId('6491795bdf1faef3505e512b') // loco-web-testing
     const { isLive, stats, channelIds, videoIds } = await fetchYTLiveStats(user)
     const DataToInsert = {
       request: JSON.stringify(responseBody),
