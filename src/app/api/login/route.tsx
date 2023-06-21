@@ -66,6 +66,8 @@ export async function POST(request: NextRequest) {
       raw_response: JSON.stringify(res),
       lastLoginOn: new Date(),
       isAdmin: !!existingUserResult?.isAdmin,
+      token_refresh_count: 0,
+      token_refreshed_on: new Date(),
     }
 
     if (existingUserResult) {
