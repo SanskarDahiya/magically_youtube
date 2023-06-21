@@ -27,9 +27,9 @@ const LoginModal = () => {
         body: JSON.stringify(codeResponse),
       })
       if (response?.success === true) {
-        setUser(response.user)
+        setUser(response.email)
         setIsAdmin(response?.isAdmin === true)
-        localStorage.setItem('user_email', response.user)
+        localStorage.setItem('user_email', response.email)
       } else if (response.message === 'Youtube access is not provided') {
         alert('Youtube access is not provided')
       }
@@ -53,7 +53,7 @@ const LoginModal = () => {
         body: JSON.stringify({ email: user_ }),
       })
       if (response?.success === true) {
-        setUser(user_)
+        setUser(response.email)
         setIsAdmin(response?.isAdmin === true)
       } else {
         localStorage.removeItem('user_email')

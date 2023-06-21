@@ -1,5 +1,6 @@
 import { type NextRequest } from 'next/server'
 import { _getTime, _updateTime, getUserTable } from '@/components/getMongoDb'
+import { IUser_DB } from '@/dbTypes'
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,15 +9,20 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid Request')
     }
     const userDb = await getUserTable()
-    const response = await userDb
+    const response = (await userDb
       .find({ email: res?.email, isDeleted: false })
-      .toArray()
+      .toArray()) as IUser_DB[]
 
-    for (let item of response) {
-      await userDb.findOneAndUpdate(
-        { _id: item._id },
-        { $set: _updateTime({ isDeleted: true }) }
-      )
+    if (response.length > 0) {
+      for (let item of response) {
+        if (!item?._id) {
+          continue
+        }
+        await userDb.findOneAndUpdate(
+          { _id: item._id },
+          { $set: _updateTime({ isDeleted: true }) }
+        )
+      }
     }
 
     return new Response(JSON.stringify({ success: true }))

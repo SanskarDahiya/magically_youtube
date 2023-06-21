@@ -1,6 +1,8 @@
 import { type NextRequest } from 'next/server'
 import { getUserTable } from '@/components/getMongoDb'
 import { checkGoogleAccessToken } from '@/helper/youtube_helper'
+import { IUser_DB } from '@/dbTypes'
+import { populateUserResponse } from '@/helper/populateResponse'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,25 +12,19 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid Request')
     }
     const userDb = await getUserTable()
-    const existingUserResult = await userDb.findOne({
+    const existingUserResult = (await userDb.findOne({
       email: res?.email,
-      isDeleted: false,
-    })
+    })) as IUser_DB
+
     if (!existingUserResult) {
       throw new Error('Invalid User')
     }
-    // No need to validate here
-    // IMP: Can do here as well
-    // await checkGoogleAccessToken(
-    //   existingUserResult._id,
-    //   existingUserResult.tokens
-    // )
-    return new Response(
-      JSON.stringify({
-        success: true,
-        isAdmin: !!existingUserResult?.isAdmin || undefined, // undefined removed entry from response
-      })
-    )
+
+    if (existingUserResult.isDeleted) {
+      throw new Error(`Session Expired! Please Login Again`)
+    }
+
+    return new Response(populateUserResponse(existingUserResult))
   } catch (err: any) {
     return new Response(
       JSON.stringify({

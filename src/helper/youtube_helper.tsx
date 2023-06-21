@@ -3,6 +3,35 @@ import { Auth, youtube_v3 } from 'googleapis'
 import oauth2Client from '@/components/getGoogleAuth'
 import { _updateTime, getClientDb, getUserTable } from '@/components/getMongoDb'
 import youtubeDataV3 from './youtubeDataV3'
+import { IUser } from '@/dbTypes'
+
+export const fetchChannelList = async (user: IUser) => {
+  let channelIds: IUser['ytChannel'][] = []
+  try {
+    const getChannelList = (await youtubeDataV3(user, {
+      yt_query: {
+        part: ['id', 'snippet'],
+        mine: true,
+      },
+      yt_service: 'channels',
+    })) as { data: youtube_v3.Schema$ChannelListResponse }
+
+    channelIds = (
+      (Array.isArray(getChannelList?.data?.items) &&
+        getChannelList?.data?.items) ||
+      []
+    ).map((channelItem) => {
+      return {
+        id: channelItem?.id,
+        country: channelItem.snippet?.country,
+        customUrl: channelItem.snippet?.customUrl,
+        description: channelItem.snippet?.description,
+        title: channelItem.snippet?.title,
+      }
+    })
+  } catch (err) {}
+  return channelIds
+}
 
 export const fetchYTLiveStats = async (user: any) => {
   let channelIds = []
