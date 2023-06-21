@@ -16,5 +16,9 @@ export const populateUserResponse = (user: IUser) => {
     ...rest
   } = user
 
-  return JSON.stringify({ success: true, ...rest })
+  return JSON.stringify({
+    success: true,
+    ...rest,
+    isAdmin: isAdmin || undefined,
+  })
 }
