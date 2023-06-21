@@ -34,10 +34,10 @@ export async function POST(request: NextRequest) {
     //   throw new Error('Youtube access is not provided')
     //   return
     // }
-    if (data.scope?.search('yt-analytics.readonly') === -1) {
-      throw new Error('Youtube access is not provided')
-      return
-    }
+    // if (data.scope?.search('yt-analytics.readonly') === -1) {
+    //   throw new Error('Youtube access is not provided')
+    //   return
+    // }
     // if (data.scope?.search('yt-analytics-monetary.readonly') === -1) {
     //   throw new Error('Youtube access is not provided')
     //   return

@@ -35,7 +35,7 @@ const youtubeDataV3 = async (
 
   console.log(
     '🚀 ~ file: youtubeDataV3 ~ response:',
-    JSON.stringify({ yt_query: yt_query, resp: response.data })
+    JSON.stringify({ yt_service, yt_query: yt_query, resp: response.data })
   )
   return response
 }

@@ -7,6 +7,7 @@ import {
 } from '@/components/getMongoDb'
 import { fetchYTLiveStats } from '@/helper/youtube_helper'
 import { ObjectId } from 'mongodb'
+import { IUser_DB } from '@/dbTypes'
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,14 +25,16 @@ export async function POST(request: NextRequest) {
     const userDb = await getUserTable()
     const campaignMapDb = await getCampaignMappingTable()
 
-    const user = await userDb.findOne({ username: streamerUsername })
+    const user = (await userDb.findOne({
+      username: streamerUsername,
+    })) as IUser_DB
     if (!user) {
       throw new Error('Invalid Streamer')
     }
 
     const CampaignId = new ObjectId('6491795bdf1faef3505e512b') // loco-web-testing
     // Later will be fetched from user collection
-    const { isLive, stats, channelIds, videoIds } = await fetchYTLiveStats(user)
+    const { isLive, stats } = await fetchYTLiveStats(user)
     const DataToInsert = {
       userId: user._id,
       userEmail: user.email,
@@ -41,7 +44,6 @@ export async function POST(request: NextRequest) {
       eventFiredOn: new Date(timestamp),
       isLiveVideoPresent: !!isLive,
       live_stats: stats,
-      yt_info: { channelIds, videoIds },
     }
 
     await campaignMapDb.insertOne(_getTime(DataToInsert))
