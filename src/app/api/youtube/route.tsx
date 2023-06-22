@@ -1,6 +1,6 @@
-import { type NextRequest } from 'next/server'
-import { _getTime, _updateTime, getUserTable } from '@/components/getMongoDb'
+import type { NextRequest } from 'next/server'
 import youtubeDataV3 from '@/helper/youtubeDataV3'
+import { UserDao } from '@/serverComponent/DBWrapper'
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,10 +9,7 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid Request')
     }
     const searchUser = res.searchUser || res.email
-    const userDb = await getUserTable()
-    const existingUserResult = await userDb.findOne({
-      email: searchUser,
-    })
+    const existingUserResult = await UserDao.getByEmail(searchUser)
     console.log(
       '🚀 ~ file: route.tsx:17 ~ POST ~ existingUserResult:',
       JSON.stringify(existingUserResult)
@@ -21,16 +18,12 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid User Id Searched')
     }
 
-    const currentUserResult = await userDb.findOne({
-      email: res?.email,
-      isDeleted: false,
-      isAdmin: true,
-    })
+    const currentUserResult = await UserDao.getActiveUserByEmail(res?.email)
     console.log(
       '🚀 ~ file: route.tsx:17 ~ POST ~ currentUserResult:',
       JSON.stringify(currentUserResult)
     )
-    if (!currentUserResult) {
+    if (!currentUserResult || currentUserResult.isAdmin !== true) {
       throw new Error('Invalid Request')
     }
 

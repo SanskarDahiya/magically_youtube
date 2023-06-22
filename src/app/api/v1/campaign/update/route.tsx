@@ -1,11 +1,7 @@
 import { type NextRequest } from 'next/server'
-import {
-  _getTime,
-  _updateTime,
-  getCampaignMappingTable,
-  getUserTable,
-} from '@/components/getMongoDb'
 import { fetchYTLiveStats } from '@/helper/youtube_helper'
+import { CampaignEventDao, UserDao } from '@/serverComponent/DBWrapper'
+import { ICampaignMapping } from '@/dbTypes'
 import { ObjectId } from 'mongodb'
 
 export async function POST(request: NextRequest) {
@@ -21,23 +17,22 @@ export async function POST(request: NextRequest) {
     }
     // NaN is False
     const timestamp = new Date(WebTimeStamp).getTime() || new Date().getTime()
-    const userDb = await getUserTable()
-    const campaignMapDb = await getCampaignMappingTable()
 
-    const user = await userDb.findOne({
-      username: streamerUsername,
-    })
+    const user = await UserDao.getByUsername(streamerUsername)
     if (!user) {
       throw new Error('Invalid Streamer')
     }
 
-    const CampaignId = new ObjectId('6491795bdf1faef3505e512b') // loco-web-testing
+    const CampaignId =
+      user.currentCampaignId || new ObjectId('6491795bdf1faef3505e512b') // loco-web-testing
     // Later will be fetched from user collection
     const { isLive, stats } = await fetchYTLiveStats(user)
-    const DataToInsert = {
+    const DataToInsert: ICampaignMapping = {
+      _id: new ObjectId(),
+      _createdOn: new Date(),
+      _updatedOn: new Date(),
       userId: user._id,
       userEmail: user.email,
-      username: user.username,
       campaignId: CampaignId,
       isActive: isActive,
       eventFiredOn: new Date(timestamp),
@@ -45,7 +40,7 @@ export async function POST(request: NextRequest) {
       live_stats: stats,
     }
 
-    await campaignMapDb.insertOne(_getTime(DataToInsert))
+    await CampaignEventDao.insert(DataToInsert)
 
     return new Response(
       JSON.stringify({

@@ -1,23 +1,39 @@
 import { _getTime, _updateTime, getUserTable } from '@/components/getMongoDb'
-import { IUser } from '@/dbTypes'
-import { ObjectId } from 'mongodb'
+import type { IUser } from '@/dbTypes'
+import type { Auth } from 'googleapis'
+import type { ObjectId } from 'mongodb'
 
 class UserHoc {
+  dbCollection = getUserTable
   constructor() {}
 
   async update(_id: ObjectId, user: Partial<IUser>) {
-    const db = await getUserTable()
+    const db = await this.dbCollection()
     const { _id: UserDocId, ...restUser } = user
     return await db.findOneAndUpdate({ _id }, { $set: _updateTime(restUser) })
   }
 
   async insert(user: IUser) {
-    const db = await getUserTable()
+    const db = await this.dbCollection()
     return await db.insertOne(_getTime(user))
   }
 
+  async updateGoogleTokens(_id: ObjectId, tokens: Auth.Credentials) {
+    const db = await this.dbCollection()
+
+    return await db.findOneAndUpdate(
+      { _id },
+      {
+        $set: _updateTime({
+          tokens: tokens,
+          token_refreshed_on: new Date(),
+        }),
+        $inc: { token_refresh_count: 1 },
+      }
+    )
+  }
   async markUserInActive(_ids: ObjectId[]) {
-    const db = await getUserTable()
+    const db = await this.dbCollection()
     const result = await Promise.allSettled(
       _ids.map((_id) => {
         return db.findOneAndUpdate(
@@ -30,14 +46,22 @@ class UserHoc {
   }
 
   async getActiveUserByEmail(email: string) {
-    const db = await getUserTable()
+    if (!email?.trim()) return null
+    const db = await this.dbCollection()
     const result = await db.findOne({ email, isDeleted: false })
 
     return result
   }
 
+  async getByUsername(username: string) {
+    if (!username?.trim()) return null
+    const db = await this.dbCollection()
+    const result = await db.findOne({ username })
+    return result
+  }
   async getByEmail(email: string) {
-    const db = await getUserTable()
+    if (!email?.trim()) return null
+    const db = await this.dbCollection()
     const result = await db.findOne({ email })
 
     return result

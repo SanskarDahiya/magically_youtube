@@ -1,11 +1,11 @@
-import { ObjectId } from 'mongodb'
-import { Auth, youtube_v3 } from 'googleapis'
 import oauth2Client from '@/components/getGoogleAuth'
-import { _updateTime, getClientDb, getUserTable } from '@/components/getMongoDb'
 import youtubeDataV3 from './youtubeDataV3'
-import { IUser } from '@/dbTypes'
 import wretch from 'wretch'
 import { parse } from 'node-html-parser'
+import { UserDao } from '@/serverComponent/DBWrapper'
+import type { ObjectId } from 'mongodb'
+import type { Auth, youtube_v3 } from 'googleapis'
+import type { ICampaignMappingLiveStats, IUser } from '@/dbTypes'
 
 export const fetchChannelList = async (user: IUser) => {
   let channelIds: IUser['ytChannel'][] = []
@@ -36,28 +36,17 @@ export const fetchChannelList = async (user: IUser) => {
 }
 
 export const fetchYTLiveStats = async (user: IUser) => {
-  let stats: any = null
+  let stats: ICampaignMappingLiveStats | null = null
   let videoId: string | null = null
   try {
-    if (!user.ytChannel?.customUrl) {
-      const channelList = await fetchChannelList(user)
-      if (channelList[0]?.id) {
-        user.ytChannel = channelList[0]
-        const userDb = await getUserTable()
-        await userDb.findOneAndUpdate(
-          { _id: user._id },
-          { $set: _updateTime({ ytChannel: channelList[0] }) }
-        )
-      }
-    }
     if (!user.ytChannel?.customUrl) {
       throw new Error(
         '--->>> No Youtube Channel Found <<=====' + user._id + '::' + user.email
       )
     }
-
+    let response = new URL('http://localhost:8000') // just sample url
     try {
-      const response = await wretch(
+      response = await wretch(
         `https://youtube.com/${user.ytChannel?.customUrl}/live`
       )
         .get()
@@ -69,30 +58,30 @@ export const fetchYTLiveStats = async (user: IUser) => {
             .map((item) => item.getAttribute('href'))
         )
         .then((res) => new URL((Array.isArray(res) ? res[0] : res) || ''))
-
-      videoId = response.searchParams.get('v')
-      if (!videoId && response.href.search('youtube') >= 0) {
-        throw new Error(
-          '--->>> User is not LIVE:YTCALL <<=====' +
-            user._id +
-            '::' +
-            user.email +
-            '::' +
-            user.ytChannel?.customUrl
-        )
-      }
     } catch (err: any) {
       console.log(
         '🚀 ~ file: youtube_helper.tsx:82 ~ fetchYTLiveStats YT URL SCRAPPING ~ err:',
         err?.message
       )
     }
+    videoId = response.searchParams.get('v') || null
+    if (!videoId && response.href.search('youtube') >= 0) {
+      throw new Error(
+        '--->>> User is not LIVE:YTCALL <<=====' +
+          user._id +
+          '::' +
+          user.email +
+          '::' +
+          user.ytChannel?.customUrl
+      )
+    }
+
     if (!videoId) {
       if (user?.ytChannel?.id) {
         console.warn(
           '===>>>====>>>> MAKING SEARCH API CALL NOW <<<<=====<<<<<===='
         )
-        const searchLiveVideoResponse = await youtubeDataV3(user, {
+        const searchLiveVideoResponse = (await youtubeDataV3(user, {
           yt_query: {
             channelId: user.ytChannel.id,
             part: ['snippet'],
@@ -100,7 +89,8 @@ export const fetchYTLiveStats = async (user: IUser) => {
             type: 'video',
           },
           yt_service: 'search',
-        })
+        })) as { data: youtube_v3.Schema$SearchListResponse }
+
         const videoIds = (
           (Array.isArray(searchLiveVideoResponse?.data?.items) &&
             searchLiveVideoResponse?.data?.items) ||
@@ -144,8 +134,12 @@ export const fetchYTLiveStats = async (user: IUser) => {
     const likeCount = videoItem.statistics?.likeCount
     const viewCount = videoItem.statistics?.viewCount
     stats = {
+      liveStreamingDetails: videoItem.liveStreamingDetails,
       status: videoItem.status,
-      streamInfo: videoItem.snippet,
+      streamInfo: {
+        ...videoItem.snippet,
+        thumbnails: videoItem.snippet?.thumbnails?.standard,
+      },
       statistics: {
         concurrentViewers: parseInt(concurrentViewers || '') || 0,
         commentCount: parseInt(commentCount || '') || 0,
@@ -167,34 +161,31 @@ export const fetchYTLiveStats = async (user: IUser) => {
   }
 }
 
+export const resetGoogleToken = async (
+  _id: ObjectId,
+  tokens: Auth.Credentials
+) => {
+  oauth2Client.setCredentials(tokens)
+  // token is expired..
+  const { credentials } = await oauth2Client.refreshAccessToken()
+  await UserDao.updateGoogleTokens(_id, credentials)
+  return credentials
+}
+
 export const checkGoogleAccessToken = async (
   _id: ObjectId,
   tokens: Auth.Credentials
-): Promise<Auth.Credentials> => {
-  oauth2Client.setCredentials(tokens)
+) => {
   try {
     if (
-      tokens.expiry_date &&
+      tokens?.expiry_date &&
       new Date(tokens.expiry_date).getTime() - new Date().getTime() < 0
     ) {
-      // token is expired..
-      const { credentials } = await oauth2Client.refreshAccessToken()
+      const credentials = await resetGoogleToken(_id, tokens)
       tokens = credentials
-      const userDb = await getUserTable()
-      await userDb.findOneAndUpdate(
-        { _id: _id },
-        {
-          $set: _updateTime({
-            tokens: credentials,
-            token_refreshed_on: new Date(),
-          }),
-          $inc: { token_refresh_count: 1 },
-        }
-      )
-
       return credentials
     }
-  } catch (err: unknown) {
+  } catch (err: any) {
     // @ts-ignore
     const errMEssage = err?.message || 'Invalid Token Grant'
     if (errMEssage === 'invalid_grant') {
