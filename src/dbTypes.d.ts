@@ -26,5 +26,3 @@ export interface IUser extends defaultValues {
     title?: string | null
   }
 }
-
-export type IUser_DB = IUser | undefined

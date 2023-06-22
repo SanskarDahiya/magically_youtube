@@ -1,15 +1,10 @@
 import { type NextRequest } from 'next/server'
-import {
-  _getTime,
-  _updateTime,
-  getDeletedUserTable,
-  getUserTable,
-} from '@/components/getMongoDb'
+import { getDeletedUserTable } from '@/components/getMongoDb'
 import oauth2Client from '@/components/getGoogleAuth'
 import { ObjectId } from 'mongodb'
-import { IUser, IUser_DB } from '@/dbTypes'
+import type { IUser } from '@/dbTypes'
 import { fetchChannelList } from '@/helper/youtube_helper'
-import { populateUserResponse } from '@/helper/populateResponse'
+import { UserDao } from '@/serverComponent/DBWrapper'
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +13,6 @@ export async function POST(request: NextRequest) {
     if (!res?.code) {
       throw new Error('Invalid Code')
     }
-    const userDb = await getUserTable()
     const { tokens: data } = await oauth2Client.getToken(res?.code)
     let email
     if (!data.access_token || !data.refresh_token) {
@@ -47,62 +41,56 @@ export async function POST(request: NextRequest) {
       throw new Error('Unable to get User Email')
     }
 
-    const existingUserResult = (await userDb.findOne({
-      email: email,
-    })) as IUser_DB
+    const existingUserInfo = await UserDao.getByEmail(email)
 
     console.log(
       '🚀 ~ file: route.tsx:37 ~ POST ~ result:',
-      JSON.stringify(existingUserResult)
+      JSON.stringify(existingUserInfo)
     )
-
-    const userInformation = {
+    const thisDate = new Date()
+    const newUserInfo: IUser = {
       _id: new ObjectId(),
-      ...existingUserResult,
+      ...existingUserInfo,
       email: email,
       code: res?.code,
       tokens: data,
       isDeleted: false,
       raw_response: JSON.stringify(res),
-      lastLoginOn: new Date(),
-      isAdmin: !!existingUserResult?.isAdmin,
+      isAdmin: !!existingUserInfo?.isAdmin,
       token_refresh_count: 0,
-      token_refreshed_on: new Date(),
+      _createdOn: thisDate,
+      _updatedOn: thisDate,
+      lastLoginOn: thisDate,
+      token_refreshed_on: thisDate,
     }
 
-    if (existingUserResult) {
-      await userDb.findOneAndUpdate(
-        { _id: existingUserResult._id },
-        { $set: _updateTime(userInformation) }
-      )
+    if (existingUserInfo) {
+      await UserDao.update(existingUserInfo._id, newUserInfo)
 
       // Transfer All data into another table
       const db = await getDeletedUserTable()
       await db.insertOne({
-        ...existingUserResult,
+        ...existingUserInfo,
         isDeleted: true,
         _id: new ObjectId(),
         _deletedOn: new Date(),
       })
     } else {
-      await userDb.insertOne(_getTime(userInformation))
+      await UserDao.insert(newUserInfo)
     }
 
     {
       // Fetch & add Channel Name
-      if (!userInformation.ytChannel) {
-        const channelList = await fetchChannelList(userInformation as IUser)
+      if (!newUserInfo.ytChannel) {
+        const channelList = await fetchChannelList(newUserInfo as IUser)
         if (channelList[0]?.id) {
-          userInformation.ytChannel = channelList[0]
-          await userDb.findOneAndUpdate(
-            { _id: userInformation._id },
-            { $set: _updateTime({ ytChannel: channelList[0] }) }
-          )
+          newUserInfo.ytChannel = channelList[0]
+          await UserDao.update(newUserInfo._id, { ytChannel: channelList[0] })
         }
       }
     }
 
-    return new Response(populateUserResponse(userInformation as IUser))
+    return new Response(UserDao.populateSuccess(newUserInfo))
   } catch (err: any) {
     return new Response(
       JSON.stringify({

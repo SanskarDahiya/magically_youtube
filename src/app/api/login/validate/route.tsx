@@ -1,8 +1,5 @@
 import { type NextRequest } from 'next/server'
-import { getUserTable } from '@/components/getMongoDb'
-import { checkGoogleAccessToken } from '@/helper/youtube_helper'
-import { IUser_DB } from '@/dbTypes'
-import { populateUserResponse } from '@/helper/populateResponse'
+import { UserDao } from '@/serverComponent/DBWrapper'
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,11 +8,7 @@ export async function POST(request: NextRequest) {
     if (!res?.email) {
       throw new Error('Invalid Request')
     }
-    const userDb = await getUserTable()
-    const existingUserResult = (await userDb.findOne({
-      email: res?.email,
-    })) as IUser_DB
-
+    const existingUserResult = await UserDao.getByEmail(res.email)
     if (!existingUserResult) {
       throw new Error('Invalid User')
     }
@@ -24,7 +17,7 @@ export async function POST(request: NextRequest) {
       throw new Error(`Session Expired! Please Login Again`)
     }
 
-    return new Response(populateUserResponse(existingUserResult))
+    return new Response(UserDao.populateSuccess(existingUserResult))
   } catch (err: any) {
     return new Response(
       JSON.stringify({

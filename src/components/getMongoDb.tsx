@@ -1,3 +1,4 @@
+import type { IUser } from '@/dbTypes'
 import { MongoClient, ServerApiVersion } from 'mongodb'
 
 const uri = process.env.MONGODB_URI
@@ -56,11 +57,11 @@ export const getClientDb = async () => {
 
 export const getUserTable = async () => {
   const db = await getClientDb()
-  return db.collection('user_tokens')
+  return db.collection<IUser>('user_tokens')
 }
 export const getDeletedUserTable = async () => {
   const db = await getClientDb()
-  return db.collection('deleted_user_tokens')
+  return db.collection<IUser & { _deletedOn: Date }>('deleted_user_tokens')
 }
 export const getCampaignTable = async () => {
   const db = await getClientDb()
@@ -71,13 +72,13 @@ export const getCampaignMappingTable = async () => {
   return db.collection('campaign_details')
 }
 
-export const _updateTime = (obj: any) => {
+export function _updateTime<T>(obj: Partial<T>): any {
   return {
     ...obj,
     _updatedOn: new Date(),
   }
 }
-export const _getTime = (obj: any) => {
+export function _getTime<T>(obj: Partial<T>): any {
   return {
     ...obj,
     _createdOn: new Date(),

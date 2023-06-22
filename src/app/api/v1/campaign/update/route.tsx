@@ -7,7 +7,6 @@ import {
 } from '@/components/getMongoDb'
 import { fetchYTLiveStats } from '@/helper/youtube_helper'
 import { ObjectId } from 'mongodb'
-import { IUser_DB } from '@/dbTypes'
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,9 +24,9 @@ export async function POST(request: NextRequest) {
     const userDb = await getUserTable()
     const campaignMapDb = await getCampaignMappingTable()
 
-    const user = (await userDb.findOne({
+    const user = await userDb.findOne({
       username: streamerUsername,
-    })) as IUser_DB
+    })
     if (!user) {
       throw new Error('Invalid Streamer')
     }
