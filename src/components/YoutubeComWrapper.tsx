@@ -46,7 +46,7 @@ const YoutubeComWrapper = ({
         className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded relative"
         onClick={async () => {
           if (isLoading) return
-          const email = useAppStore.getState().user
+          const email = useAppStore.getState().user?.email
           if (!email || !yt_query) {
             alert('Invalid Action')
             return

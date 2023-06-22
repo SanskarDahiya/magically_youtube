@@ -1,32 +1,29 @@
 'use client'
 import React from 'react'
-import {
-  SearchIcon,
-  LogoutIcon,
-  UserIcon,
-  AdjustmentsIcon,
-  BellIcon,
-} from '@heroicons/react/outline'
+import { SearchIcon, LogoutIcon } from '@heroicons/react/outline'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import useAppStore from '@/store/UserStore'
 import LoginModal from './LoginButton'
 import { useCustomFetch } from './customFetchButton'
+import { usePathname } from 'next/navigation'
 
 const NavBar = () => {
   const navBarHeight = 71
   const { __trigger } = useCustomFetch()
-  const { isAdmin, searchUser, setSearchUser, user, setUser } = useAppStore()
-
+  const { searchUser, setSearchUser, user, setUser } = useAppStore()
+  const pathname = usePathname()
   const logout = async () => {
-    await __trigger('/api/login/unregister', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: user }),
-    })
+    if (user?.email) {
+      await __trigger('/api/login/unregister', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: user.email }),
+      })
+    }
     window.localStorage.removeItem('user_email')
     setUser(null)
   }
@@ -37,7 +34,7 @@ const NavBar = () => {
       style={{ height: navBarHeight }}
     >
       <div className="inline-flex flex-1">
-        {isAdmin ? (
+        {pathname === '/admin' && user?.isAdmin ? (
           <>
             <input
               type="email"
@@ -62,7 +59,9 @@ const NavBar = () => {
           <div>
             <Menu.Button className="inline-flex justify-center w-full items-center text-gray-500 hover:text-gray-800 focus:outline-none">
               {/* <img className="rounded-full w-8 h-8" src={UserAvatar} alt="" /> */}
-              <span className="font-medium ml-3 mr-1">Welcome: {user}</span>
+              <span className="font-medium ml-3 mr-1">
+                Welcome: {user.email}
+              </span>
               <ChevronDownIcon className="w-5 h-5" aria-hidden="true" />
             </Menu.Button>
           </div>

@@ -15,7 +15,7 @@ const scope_arr = [
 
 const LoginModal = () => {
   const { data, isLoading, error, __trigger, __reset } = useCustomFetch()
-  const { user, setUser, setIsAdmin } = useAppStore()
+  const { user, setUser } = useAppStore()
 
   const login = useGoogleLogin({
     onSuccess: async (codeResponse) => {
@@ -27,8 +27,8 @@ const LoginModal = () => {
         body: JSON.stringify(codeResponse),
       })
       if (response?.success === true) {
-        setUser(response.email)
-        setIsAdmin(response?.isAdmin === true)
+        setUser(response)
+
         localStorage.setItem('user_email', response.email)
       } else if (response.message === 'Youtube access is not provided') {
         alert('Youtube access is not provided')
@@ -53,8 +53,7 @@ const LoginModal = () => {
         body: JSON.stringify({ email: user_ }),
       })
       if (response?.success === true) {
-        setUser(response.email)
-        setIsAdmin(response?.isAdmin === true)
+        setUser(response)
       } else {
         localStorage.removeItem('user_email')
       }
@@ -135,7 +134,7 @@ const LoginModal = () => {
                 visibility: isLoading ? 'hidden' : 'visible',
               }}
             >
-              {user ? 'Unlink ' + user : 'Link Youtube Account'}
+              {user ? 'Unlink ' + user.email : 'Link Youtube Account'}
             </div>
             {isLoading && (
               <div
