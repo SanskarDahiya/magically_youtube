@@ -50,18 +50,19 @@ export async function POST(request: NextRequest) {
     const thisDate = new Date()
     const newUserInfo: IUser = {
       _id: new ObjectId(),
-      ...existingUserInfo,
-      email: email,
-      code: res?.code,
-      tokens: data,
-      isDeleted: false,
-      raw_response: JSON.stringify(res),
-      isAdmin: !!existingUserInfo?.isAdmin,
-      token_refresh_count: 0,
       _createdOn: thisDate,
       _updatedOn: thisDate,
+      email: email,
+      ...existingUserInfo,
+      // New info to update
+      isAdmin: !!existingUserInfo?.isAdmin,
+      raw_response: JSON.stringify(res),
+      code: res?.code,
       lastLoginOn: thisDate,
+      tokens: data,
+      token_refresh_count: 0,
       token_refreshed_on: thisDate,
+      isDeleted: false,
     }
 
     if (existingUserInfo) {
