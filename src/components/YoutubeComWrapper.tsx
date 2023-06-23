@@ -251,7 +251,7 @@ export default function () {
         /> */}
       </div>
       <div className="flex justify-between">
-        <YoutubeComWrapper
+        {/* <YoutubeComWrapper
           value={videoId}
           setValue={setVideoId}
           isActive={!!channelId}
@@ -263,7 +263,7 @@ export default function () {
             eventType: 'live',
             type: 'video',
           }}
-        />
+        /> */}
         <YoutubeComWrapper
           isActive={!!channelId && !!videoId}
           buttonText="Video Stat"
