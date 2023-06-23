@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
       email = UserInfo.email
     }
 
-    // if (data.scope?.search('youtube.readonly') === -1) {
-    //   throw new Error('Youtube access is not provided')
-    //   return
-    // }
+    if (data.scope?.search('youtube.readonly') === -1) {
+      throw new Error('Please provide Youtube access to continue')
+      return
+    }
     // if (data.scope?.search('yt-analytics.readonly') === -1) {
     //   throw new Error('Youtube access is not provided')
     //   return
