@@ -9,7 +9,7 @@ class UserHoc {
 
   async update(_id: ObjectId, user: Partial<IUser>) {
     const db = await this.dbCollection()
-    const { _id: UserDocId, ...restUser } = user
+    const { _id: UserDocId, _createdOn, ...restUser } = user
     return await db.findOneAndUpdate({ _id }, { $set: _updateTime(restUser) })
   }
 

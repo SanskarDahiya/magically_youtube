@@ -12,7 +12,7 @@ class CampaignHoc {
 
   async update(_id: ObjectId, doc: Partial<ICampaign>) {
     const db = await this.dbCollection()
-    const { _id: DocId, ...restUser } = doc
+    const { _id: DocId, _createdOn, ...restUser } = doc
     return await db.findOneAndUpdate({ _id }, { $set: _updateTime(restUser) })
   }
 
