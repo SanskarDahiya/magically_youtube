@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const CampaignId =
       user.currentCampaignId || new ObjectId('6491795bdf1faef3505e512b') // loco-web-testing
     // Later will be fetched from user collection
-    const { isLive, stats } = await fetchYTLiveStats(user)
+    const { isLive, stats, channelId, videoId } = await fetchYTLiveStats(user)
     const DataToInsert: ICampaignMapping = {
       _id: new ObjectId(),
       _createdOn: new Date(),
@@ -37,6 +37,8 @@ export async function POST(request: NextRequest) {
       isActive: isActive,
       eventFiredOn: new Date(timestamp),
       isLiveVideoPresent: !!isLive,
+      channelId,
+      videoId,
       live_stats: stats,
     }
 

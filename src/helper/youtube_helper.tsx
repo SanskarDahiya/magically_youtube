@@ -38,6 +38,8 @@ export const fetchChannelList = async (user: IUser) => {
 export const fetchYTLiveStats = async (user: IUser) => {
   let stats: ICampaignMappingLiveStats | null = null
   let videoId: string | null = null
+  let channelId: string | null = user?.ytChannel?.id || null
+
   try {
     if (!user.ytChannel?.customUrl) {
       throw new Error(
@@ -158,6 +160,8 @@ export const fetchYTLiveStats = async (user: IUser) => {
   return {
     isLive: !!videoId,
     stats,
+    channelId,
+    videoId,
   }
 }
 

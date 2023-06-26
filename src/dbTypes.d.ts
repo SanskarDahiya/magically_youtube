@@ -63,6 +63,8 @@ export interface ICampaignMapping extends defaultValues {
   isActive: boolean
   eventFiredOn: Date
   isLiveVideoPresent: boolean
+  channelId?: string | null
+  videoId?: string | null
   live_stats: null | ICampaignMappingLiveStats
 }
 
