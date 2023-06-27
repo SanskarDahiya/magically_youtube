@@ -99,6 +99,29 @@ async function postQuery(req: NextRequest) {
   }
 }
 
-export const POST = AdminMiddleware(postQuery)
+async function putQuery(req: NextRequest) {
+  try {
+    const requestBody = await req.json()
+    if (!requestBody || !requestBody?.isEntry) {
+      throw new Error('Invalid Request')
+    }
+    const { isEntry, ...rest } = requestBody
+    await CampaignDao.insert(rest)
 
+    return new Response(JSON.stringify({ ok: 'ok' }, null, 2))
+  } catch (err: any) {
+    console.log('🚀 ~ file: route.tsx:17 ~ GET ~ err:', err)
+    return new Response(
+      JSON.stringify({
+        code: err.code,
+        message: err.message,
+        stack: err.stack,
+      }),
+      { status: 518 }
+    )
+  }
+}
+
+export const POST = AdminMiddleware(postQuery)
 export const GET = AdminMiddleware(getQuery)
+export const PUT = AdminMiddleware(putQuery)
