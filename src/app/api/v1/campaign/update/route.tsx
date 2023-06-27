@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
       })
     )
   } catch (err: any) {
+    console.log('🚀 ~ file: route.tsx:53 ~ POST ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,

@@ -32,7 +32,7 @@ async function postQuery(req: NextRequest) {
       )
     )
   } catch (err: any) {
-    console.log('🚀 ~ file: route.tsx:17 ~ GET ~ err:', err)
+    console.log('🚀 ~ file: route.tsx:35 ~ postQuery ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,

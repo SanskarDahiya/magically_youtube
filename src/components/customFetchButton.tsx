@@ -31,6 +31,10 @@ export const useCustomFetch = () => {
         setData(result)
         response_to_return = result
       } catch (err: any) {
+        console.log(
+          '🚀 ~ file: customFetchButton.tsx:34 ~ __trigger: ~ err:',
+          err
+        )
         response_to_return = err
         setError({ code: err.code, message: err.message, stack: err.stack })
       } finally {

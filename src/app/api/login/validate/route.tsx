@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
 
     return new Response(UserDao.populateSuccess(existingUserResult))
   } catch (err: any) {
+    console.log('🚀 ~ file: route.tsx:22 ~ POST ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,
