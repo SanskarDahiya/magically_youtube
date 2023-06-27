@@ -1,4 +1,4 @@
-import type { IUser } from '@/dbTypes'
+import type { ICampaignMapping, IUser } from '@/dbTypes'
 import { MongoClient, ServerApiVersion } from 'mongodb'
 
 const uri = process.env.MONGODB_URI
@@ -75,7 +75,7 @@ export const getCampaignTable = async () => {
 }
 export const getCampaignMappingTable = async () => {
   const db = await getClientDb()
-  return db.collection('campaign_details')
+  return db.collection<ICampaignMapping>('campaign_details')
 }
 
 export function _updateTime<T>(obj: Partial<T>): any {
