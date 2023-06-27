@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb'
 import oauth2Client from '@/components/getGoogleAuth'
 import { google } from 'googleapis'
 import { googleServiceList } from '@/components/youtubeInterface'
+import { YtDataQueryDao } from '@/serverComponent/DBWrapper'
 
 const youtubeDataV3 = async (
   user: { _id: ObjectId; tokens: Auth.Credentials },
@@ -27,6 +28,11 @@ const youtubeDataV3 = async (
     yt_service = 'channel'
   }
 
+  await YtDataQueryDao.insert({
+    yt_service,
+    yt_query: JSON.stringify(yt_query),
+    userId: user._id,
+  })
   // @ts-ignore
   const response = await service[yt_service].list({
     ...yt_query,

@@ -59,6 +59,12 @@ export const getUserTable = async () => {
   const db = await getClientDb()
   return db.collection<IUser>('user_tokens')
 }
+
+export const getYTServiceTable = async () => {
+  const db = await getClientDb()
+  return db.collection('yt_data_mapping')
+}
+
 export const getDeletedUserTable = async () => {
   const db = await getClientDb()
   return db.collection<IUser & { _deletedOn: Date }>('deleted_user_tokens')

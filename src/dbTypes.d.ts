@@ -56,6 +56,13 @@ export interface ICampaignMappingLiveStats {
   }
 }
 
+export interface ICampaign extends defaultValues {
+  name: string
+  startDate: Date
+  duration: number
+  // and many more
+}
+
 export interface ICampaignMapping extends defaultValues {
   userId: ObjectId
   campaignId: ObjectId
