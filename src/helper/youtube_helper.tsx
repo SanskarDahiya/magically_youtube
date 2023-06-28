@@ -31,7 +31,12 @@ export const fetchChannelList = async (user: IUser) => {
         title: channelItem.snippet?.title,
       }
     })
-  } catch (err) {}
+  } catch (err) {
+    console.log(
+      '🚀 ~ file: youtube_helper.tsx:35 ~ fetchChannelList ~ err:',
+      err
+    )
+  }
   return channelIds
 }
 
@@ -190,6 +195,7 @@ export const checkGoogleAccessToken = async (
       return credentials
     }
   } catch (err: any) {
+    console.log('🚀 ~ file: youtube_helper.tsx:208 ~ err:', err)
     // @ts-ignore
     const errMEssage = err?.message || 'Invalid Token Grant'
     if (errMEssage === 'invalid_grant') {
