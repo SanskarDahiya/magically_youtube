@@ -5,6 +5,7 @@ import oauth2Client from '@/components/getGoogleAuth'
 import { google } from 'googleapis'
 import { googleServiceList } from '@/components/youtubeInterface'
 import { YtDataQueryDao } from '@/serverComponent/DBWrapper'
+import { logError } from './axiomLogger'
 
 const youtubeDataV3 = async (
   user: { _id: ObjectId; tokens: Auth.Credentials },
@@ -39,9 +40,9 @@ const youtubeDataV3 = async (
     auth: oauth2Client,
   })
 
-  console.log(
-    '🚀 ~ file: youtubeDataV3 ~ response:',
-    JSON.stringify({ yt_service, yt_query: yt_query, resp: response.data })
+  logError(
+    '🚀 ~ file: youtubeDataV3 ~ response:' +
+      JSON.stringify({ yt_service, yt_query: yt_query, resp: response.data })
   )
   return response
 }

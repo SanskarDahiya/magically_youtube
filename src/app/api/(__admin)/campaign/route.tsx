@@ -1,3 +1,4 @@
+import { logError } from '@/helper/axiomLogger'
 import { CampaignEventDao } from '@/serverComponent/DBWrapper'
 import { AdminMiddleware } from '@/serverComponent/checkAdminAuthorization'
 import type { NextRequest } from 'next/server'
@@ -32,7 +33,7 @@ async function postQuery(req: NextRequest) {
       )
     )
   } catch (err: any) {
-    console.log('🚀 ~ file: route.tsx:35 ~ postQuery ~ err:', err)
+    logError('🚀 ~ file: route.tsx:35 ~ postQuery ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,

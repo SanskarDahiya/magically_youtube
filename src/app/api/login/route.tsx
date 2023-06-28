@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import type { IUser } from '@/dbTypes'
 import { fetchChannelList } from '@/helper/youtube_helper'
 import { UserDao } from '@/serverComponent/DBWrapper'
+import { logError, logInfo } from '@/helper/axiomLogger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,9 +44,9 @@ export async function POST(request: NextRequest) {
 
     const existingUserInfo = await UserDao.getByEmail(email)
 
-    console.log(
-      '🚀 ~ file: route.tsx:37 ~ POST ~ result:',
-      JSON.stringify(existingUserInfo)
+    logInfo(
+      '🚀 ~ file: route.tsx:37 ~ POST ~ result:' +
+        JSON.stringify(existingUserInfo)
     )
     const thisDate = new Date()
     const newUserInfo: IUser = {
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     return new Response(UserDao.populateSuccess(newUserInfo))
   } catch (err: any) {
-    console.log('🚀 ~ file: route.tsx:96 ~ POST ~ err:', err)
+    logError('🚀 ~ file: route.tsx:96 ~ POST ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,

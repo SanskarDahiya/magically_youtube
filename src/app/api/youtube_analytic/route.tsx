@@ -3,6 +3,7 @@ import oauth2Client from '@/components/getGoogleAuth'
 import { google } from 'googleapis'
 import { checkGoogleAccessToken } from '@/helper/youtube_helper'
 import { UserDao } from '@/serverComponent/DBWrapper'
+import { logError, logInfo } from '@/helper/axiomLogger'
 
 // https://developers.google.com/youtube/analytics/metrics
 export async function POST(request: NextRequest) {
@@ -14,18 +15,18 @@ export async function POST(request: NextRequest) {
     const searchUser = res.searchUser || res.email
 
     const existingUserResult = await UserDao.getByEmail(searchUser)
-    console.log(
-      '🚀 ~ file: route.tsx:17 ~ POST ~ existingUserResult:',
-      JSON.stringify(existingUserResult)
+    logInfo(
+      '🚀 ~ file: route.tsx:17 ~ POST ~ existingUserResult:' +
+        JSON.stringify(existingUserResult)
     )
     if (!existingUserResult) {
       throw new Error('Invalid User Id Searched')
     }
 
     const currentUserResult = await UserDao.getActiveUserByEmail(res?.email)
-    console.log(
-      '🚀 ~ file: route.tsx:17 ~ POST ~ currentUserResult:',
-      JSON.stringify(currentUserResult)
+    logInfo(
+      '🚀 ~ file: route.tsx:17 ~ POST ~ currentUserResult:' +
+        JSON.stringify(currentUserResult)
     )
     if (!currentUserResult || currentUserResult.isAdmin !== true) {
       throw new Error('Invalid Request')
@@ -117,14 +118,14 @@ export async function POST(request: NextRequest) {
       // metrics: metrics.join(','),
     })
 
-    console.log(
-      '🚀 ~ file: youtube_analytic.tsx:59 ~ POST ~ response:',
-      JSON.stringify(response)
+    logInfo(
+      '🚀 ~ file: youtube_analytic.tsx:59 ~ POST ~ response:' +
+        JSON.stringify(response)
     )
 
     return new Response(JSON.stringify(response.data))
   } catch (err: any) {
-    console.log('🚀 ~ file: route.tsx:32 ~ POST ~ err:', err)
+    logError('🚀 ~ file: route.tsx:32 ~ POST ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,

@@ -72,7 +72,8 @@ export interface ICampaignMapping extends defaultValues {
   isLiveVideoPresent: boolean
   channelId?: string | null
   videoId?: string | null
-  live_stats: null | ICampaignMappingLiveStats
+  live_stats?: null | ICampaignMappingLiveStats
+  loco_stats?: null | ICampaignMappingLiveStats
 }
 
 export interface IUser extends defaultValues {
@@ -87,6 +88,12 @@ export interface IUser extends defaultValues {
   currentCampaignId?: ObjectId | null
   token_refresh_count?: number
   token_refreshed_on?: Date
+  locoChannel?: {
+    id?: string | null
+    customUrl?: string | null
+    title?: string | null
+    description?: string | null
+  }
   ytChannel?: {
     id?: string | null
     country?: string | null

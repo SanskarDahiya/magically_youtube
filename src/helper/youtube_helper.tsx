@@ -6,6 +6,7 @@ import { UserDao } from '@/serverComponent/DBWrapper'
 import type { ObjectId } from 'mongodb'
 import type { Auth, youtube_v3 } from 'googleapis'
 import type { ICampaignMappingLiveStats, IUser } from '@/dbTypes'
+import { logDebug, logError } from './axiomLogger'
 
 export const fetchChannelList = async (user: IUser) => {
   let channelIds: IUser['ytChannel'][] = []
@@ -32,10 +33,7 @@ export const fetchChannelList = async (user: IUser) => {
       }
     })
   } catch (err) {
-    console.log(
-      '🚀 ~ file: youtube_helper.tsx:35 ~ fetchChannelList ~ err:',
-      err
-    )
+    logError('🚀 ~ file: youtube_helper.tsx:35 ~ fetchChannelList ~ err:', err)
   }
   return channelIds
 }
@@ -66,7 +64,7 @@ export const fetchYTLiveStats = async (user: IUser) => {
         )
         .then((res) => new URL((Array.isArray(res) ? res[0] : res) || ''))
     } catch (err: any) {
-      console.log(
+      logError(
         '🚀 ~ file: youtube_helper.tsx:82 ~ fetchYTLiveStats YT URL SCRAPPING ~ err:',
         err?.message
       )
@@ -85,9 +83,7 @@ export const fetchYTLiveStats = async (user: IUser) => {
 
     if (!videoId) {
       if (user?.ytChannel?.id) {
-        console.warn(
-          '===>>>====>>>> MAKING SEARCH API CALL NOW <<<<=====<<<<<===='
-        )
+        logDebug('===>>>====>>>> MAKING SEARCH API CALL NOW <<<<=====<<<<<====')
         const searchLiveVideoResponse = (await youtubeDataV3(user, {
           yt_query: {
             channelId: user.ytChannel.id,
@@ -157,7 +153,7 @@ export const fetchYTLiveStats = async (user: IUser) => {
       },
     }
   } catch (err: any) {
-    console.log(
+    logError(
       '🚀 ~ file: youtube_helper.tsx:92 ~ fetchYTLiveStats ~ err:',
       err?.message
     )
@@ -195,7 +191,7 @@ export const checkGoogleAccessToken = async (
       return credentials
     }
   } catch (err: any) {
-    console.log('🚀 ~ file: youtube_helper.tsx:208 ~ err:', err)
+    logError('🚀 ~ file: youtube_helper.tsx:208 ~ err:', err)
     // @ts-ignore
     const errMEssage = err?.message || 'Invalid Token Grant'
     if (errMEssage === 'invalid_grant') {

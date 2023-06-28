@@ -1,4 +1,5 @@
 import { getClientDb } from '@/components/getMongoDb'
+import { logError } from '@/helper/axiomLogger'
 import { UserDao } from '@/serverComponent/DBWrapper'
 import { AdminMiddleware } from '@/serverComponent/checkAdminAuthorization'
 import { ObjectId } from 'mongodb'
@@ -37,7 +38,7 @@ async function getQuery() {
       )
     )
   } catch (err: any) {
-    console.log('🚀 ~ file: route.tsx:17 ~ GET ~ err:', err)
+    logError('🚀 ~ file: route.tsx:17 ~ GET ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,
@@ -94,7 +95,7 @@ async function postQuery(req: NextRequest) {
       )
     )
   } catch (err: any) {
-    console.log('🚀 ~ file: route.tsx:17 ~ GET ~ err:', err)
+    logError('🚀 ~ file: route.tsx:17 ~ GET ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,

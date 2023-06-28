@@ -3,6 +3,7 @@ import { fetchYTLiveStats } from '@/helper/youtube_helper'
 import { CampaignEventDao, UserDao } from '@/serverComponent/DBWrapper'
 import { ICampaignMapping } from '@/dbTypes'
 import { ObjectId } from 'mongodb'
+import { logError } from '@/helper/axiomLogger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
       })
     )
   } catch (err: any) {
-    console.log('🚀 ~ file: route.tsx:53 ~ POST ~ err:', err)
+    logError('🚀 ~ file: route.tsx:53 ~ POST ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,

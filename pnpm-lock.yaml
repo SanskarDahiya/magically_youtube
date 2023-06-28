@@ -14,6 +14,7 @@ specifiers:
   googleapis: ^118.0.0
   mongodb: ^5.6.0
   next: 13.4.5
+  next-axiom: ^0.18.0
   node-html-parser: ^6.1.5
   postcss: 8.4.24
   react: 18.2.0
@@ -36,6 +37,7 @@ dependencies:
   googleapis: 118.0.0
   mongodb: 5.6.0
   next: 13.4.5_biqbaboplfbrettd7655fr4n2y
+  next-axiom: 0.18.0_next@13.4.5
   node-html-parser: 6.1.5
   postcss: 8.4.24
   react: 18.2.0
@@ -2110,6 +2112,16 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: false
 
+  /next-axiom/0.18.0_next@13.4.5:
+    resolution: {integrity: sha512-OexBGAQ3l/EPCIxbaGVee+JmJZfW6DMT/NCqaRw6tsZ7dO72rsZCAMhDh6qT41+dCyb+X10Dzx3yHVy+3p1qyw==}
+    engines: {node: '>=15'}
+    peerDependencies:
+      next: ^12.1.4 || ^13
+    dependencies:
+      next: 13.4.5_biqbaboplfbrettd7655fr4n2y
+      whatwg-fetch: 3.6.2
+    dev: false
+
   /next/13.4.5_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-pfNsRLVM9e5Y1/z02VakJRfD6hMQkr24FaN2xc9GbcZDBxoOgiNAViSg5cXwlWCoMhtm4U315D7XYhgOr96Q3Q==}
     engines: {node: '>=16.8.0'}
@@ -3013,6 +3025,10 @@ packages:
   /webidl-conversions/7.0.0:
     resolution: {integrity: sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==}
     engines: {node: '>=12'}
+    dev: false
+
+  /whatwg-fetch/3.6.2:
+    resolution: {integrity: sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA==}
     dev: false
 
   /whatwg-url/11.0.0:

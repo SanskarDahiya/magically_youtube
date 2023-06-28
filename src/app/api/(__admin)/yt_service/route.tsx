@@ -1,4 +1,5 @@
 import { getYTServiceTable } from '@/components/getMongoDb'
+import { logError } from '@/helper/axiomLogger'
 import { AdminMiddleware } from '@/serverComponent/checkAdminAuthorization'
 import type { NextRequest } from 'next/server'
 
@@ -32,7 +33,7 @@ async function postQuery(req: NextRequest) {
       )
     )
   } catch (err: any) {
-    console.log('🚀 ~ file: route.tsx:17 ~ GET ~ err:', err)
+    logError('🚀 ~ file: route.tsx:17 ~ GET ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,

@@ -1,4 +1,5 @@
 'use client'
+import { logInfo } from '@/helper/axiomLogger'
 import { useState } from 'react'
 
 export const useCustomFetch = () => {
@@ -31,16 +32,13 @@ export const useCustomFetch = () => {
         setData(result)
         response_to_return = result
       } catch (err: any) {
-        console.log(
-          '🚀 ~ file: customFetchButton.tsx:34 ~ __trigger: ~ err:',
-          err
-        )
+        logInfo('🚀 ~ file: customFetchButton.tsx:34 ~ __trigger: ~ err:', err)
         response_to_return = err
         setError({ code: err.code, message: err.message, stack: err.stack })
       } finally {
         setIsLoading(false)
       }
-      console.log('🚀 ~ file: ~ result:', response_to_return)
+      logInfo('🚀 ~ file: ~ result:', response_to_return)
       return response_to_return
     },
   }

@@ -5,6 +5,7 @@ import { useGoogleLogin } from '@react-oauth/google'
 import useAppStore from '@/store/UserStore'
 import { useCustomFetch } from './customFetchButton'
 import { Dialog, Transition } from '@headlessui/react'
+import { logError } from '@/helper/axiomLogger'
 
 // Checking scope at backend
 const scope_arr = [
@@ -35,7 +36,7 @@ const LoginModal = () => {
       }
     },
     onError: () => {
-      console.log('Login Failed')
+      logError('Login Failed')
     },
     scope: scope_arr.join(', '),
     flow: 'auth-code',

@@ -1,3 +1,4 @@
+import { logError } from '@/helper/axiomLogger'
 import { UserDao } from '@/serverComponent/DBWrapper'
 import { type NextRequest } from 'next/server'
 
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     return new Response(JSON.stringify({ success: true }))
   } catch (err: any) {
-    console.log('🚀 ~ file: route.tsx:18 ~ POST ~ err:', err)
+    logError('🚀 ~ file: route.tsx:18 ~ POST ~ err:', err)
     return new Response(
       JSON.stringify({
         code: err.code,
