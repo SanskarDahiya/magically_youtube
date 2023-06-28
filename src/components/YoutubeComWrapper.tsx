@@ -264,7 +264,7 @@ export default function () {
             type: 'video',
           }}
         /> */}
-        <YoutubeComWrapper
+        {/* <YoutubeComWrapper
           isActive={!!channelId && !!videoId}
           buttonText="Video Stat"
           yt_service="videos"
@@ -274,7 +274,7 @@ export default function () {
             part: ['statistics', 'snippet'],
             type: 'video',
           }}
-        />
+        /> */}
       </div>
     </>
   )
