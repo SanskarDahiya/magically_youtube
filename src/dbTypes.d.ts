@@ -69,6 +69,7 @@ export interface ICampaignMapping extends defaultValues {
   userEmail: string
   isActive: boolean
   eventFiredOn: Date
+  eventType: 'LOCO' | 'YOUTUBE'
   isLiveVideoPresent: boolean
   channelId?: string | null
   videoId?: string | null

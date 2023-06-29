@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
       campaignId: CampaignId,
       isActive: isActive,
       eventFiredOn: new Date(timestamp),
+      eventType: 'YOUTUBE',
       isLiveVideoPresent: !!isLive,
       channelId,
       videoId,

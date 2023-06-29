@@ -160,6 +160,7 @@ export async function POST(request: NextRequest) {
       campaignId: CampaignId,
       isActive: isActive,
       eventFiredOn: new Date(timestamp),
+      eventType: 'LOCO',
       isLiveVideoPresent: !!isLive,
       channelId,
       videoId,
