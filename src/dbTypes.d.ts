@@ -79,9 +79,9 @@ export interface ICampaignMapping extends defaultValues {
 
 export interface IUser extends defaultValues {
   email: string
-  raw_response: string
-  code: string
-  tokens: Auth.Credentials
+  raw_response?: string
+  code?: string
+  tokens: Auth.Credentials | null
   isDeleted: boolean
   lastLoginOn: Date
   isAdmin: boolean
