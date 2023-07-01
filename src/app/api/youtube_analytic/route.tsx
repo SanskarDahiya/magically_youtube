@@ -31,6 +31,9 @@ export async function POST(request: NextRequest) {
     if (!currentUserResult || currentUserResult.isAdmin !== true) {
       throw new Error('Invalid Request')
     }
+    if (!existingUserResult?.tokens) {
+      throw new Error('No Youtube Token present')
+    }
     const newTokens = await checkGoogleAccessToken(
       existingUserResult._id,
       existingUserResult.tokens

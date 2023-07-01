@@ -6,11 +6,16 @@ import { google } from 'googleapis'
 import { googleServiceList } from '@/components/youtubeInterface'
 import { YtDataQueryDao } from '@/serverComponent/DBWrapper'
 import { logError } from './axiomLogger'
+import { IUser } from '@/dbTypes'
 
 const youtubeDataV3 = async (
-  user: { _id: ObjectId; tokens: Auth.Credentials },
+  user: Pick<IUser, '_id' | 'tokens'>,
   { yt_query, yt_service }: { yt_query?: any; yt_service?: string }
 ) => {
+  if (!user.tokens) {
+    throw new Error('No Youtube Token present')
+  }
+
   const newTokens = await checkGoogleAccessToken(user._id, user.tokens)
 
   oauth2Client.setCredentials(newTokens || user.tokens)
