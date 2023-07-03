@@ -35,7 +35,11 @@ const fetchLocoLiveStats = async (user: IUser) => {
         }
         return null
       })
-      .catch((err) => Promise.reject(err))
+      .catch((err: any) => {
+        console.error('Fetch Stream List Failed:', err)
+        logError('Fetch Stream List Failed:' + channelId, err?.message)
+        return Promise.reject(err)
+      })
 
     logInfo('>> API RESPONSE::' + JSON.stringify({ listVideosApiResponse }))
     videoId = listVideosApiResponse?.uid || null
@@ -54,7 +58,14 @@ const fetchLocoLiveStats = async (user: IUser) => {
       .auth(loco_token)
       .get()
       .json((item) => item)
-      .catch((err) => Promise.reject(err))
+      .catch((err: any) => {
+        console.error('Fetch Stream Chat Failed:', err)
+        logError(
+          'Fetch Stream Chat Failed:' + videoId + ':' + channelId,
+          err?.message
+        )
+        return Promise.reject(err)
+      })
     logInfo('>> API RESPONSE::' + JSON.stringify({ chatApiResponse }))
 
     stats = {
@@ -116,8 +127,12 @@ const fetchLocoLiveStats = async (user: IUser) => {
           (listVideosApiResponse?.total_vod_views_count || 0),
       },
     }
-  } catch (err) {
-    logError('🚀 ~ file: route.tsx:13 ~ fetchLocoLiveStats ~ err:', err)
+  } catch (err: any) {
+    console.error('🚀 ~ file: route.tsx:13 ~ fetchLocoLiveStats ~ err:', err)
+    logError(
+      '🚀 ~ file: route.tsx:13 ~ fetchLocoLiveStats ~ err:',
+      err?.message
+    )
   }
   return {
     isLive: !!videoId,
