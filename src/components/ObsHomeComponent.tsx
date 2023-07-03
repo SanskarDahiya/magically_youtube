@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import LogoImg from '@public/logo-white.png'
+import { logInfo } from '@/helper/axiomLogger'
 
 const TIME_TILL_SHOW = 15000 //show=true
 const TIME_TILL_HIDE = 45000 //show=false
@@ -80,14 +81,25 @@ function ObsHomeComponent({
   }, [showLogo])
 
   const sendData = async (username: string) => {
-    if (!isStreaming.current) return
-
     const currentTimestamp = new Date()
     var timestampValue = currentTimestamp
       .toISOString()
       .slice(0, 19)
       .replace('T', ' ')
 
+    logInfo(
+      JSON.stringify({
+        title: 'Will make server update API CALL',
+        __params: {
+          timestamp: timestampValue,
+          isActive: isObsSourceActive.current,
+          username,
+        },
+        isStreaming: isStreaming.current,
+      })
+    )
+
+    if (!isStreaming.current) return
     await fetch(API_URL, {
       method: 'POST',
       headers: {
