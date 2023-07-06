@@ -9,9 +9,11 @@ const TIME_TILL_SHOW = 15000 //show=true
 const TIME_TILL_HIDE = 45000 //show=false
 
 function ObsHomeComponent({
+  isStreamerHasCampaignId,
   params,
   API_URL,
 }: {
+  isStreamerHasCampaignId: boolean
   API_URL: string
   params: { username: string }
 }) {
@@ -31,6 +33,17 @@ function ObsHomeComponent({
           sendData(username)
         }, 60000)
       : null
+
+    logInfo(
+      JSON.stringify({
+        title: 'Will Page Initialize',
+        username,
+        intervalId: intervalId ? 'TIMER START' : 'OBS NOT FOUNR',
+        pluginVersion: window?.obsstudio?.pluginVersion,
+        isCampaignIdPresent: isStreamerHasCampaignId,
+        isStreaming: isStreaming.current,
+      })
+    )
 
     isObsSourceActive.current = isObsPresent
     window?.obsstudio?.getStatus((status: OBSStatus) => {
@@ -90,16 +103,19 @@ function ObsHomeComponent({
     logInfo(
       JSON.stringify({
         title: 'Will make server update API CALL',
+        IS_MAKING_API_CALL:
+          !isStreaming.current || !isStreamerHasCampaignId ? 'YES' : 'NO',
         __params: {
           timestamp: timestampValue,
           isActive: isObsSourceActive.current,
           username,
         },
+        isCampaignIdPresent: isStreamerHasCampaignId,
         isStreaming: isStreaming.current,
       })
     )
 
-    if (!isStreaming.current) return
+    if (!isStreaming.current || !isStreamerHasCampaignId) return
     await fetch(API_URL, {
       method: 'POST',
       headers: {
@@ -115,6 +131,17 @@ function ObsHomeComponent({
 
   return (
     <div className="h-screen w-screen bg-transparent text-2xl flex justify-start items-center p-4 text-black">
+      {/* {!isStreamerHasCampaignId && !isStreaming.current ? (
+        <>
+          <div className="absolute top-[25%] left-0 bg-[rgba(0,0,0,0.2)] px-4 py-8 rounded text-[22px]">
+            Thank you for participation.
+            <br />
+            You can remove this browser_source now.
+          </div>
+        </>
+      ) : (
+        <></>
+      )} */}
       <img
         src={LogoImg.src}
         alt="logo"
