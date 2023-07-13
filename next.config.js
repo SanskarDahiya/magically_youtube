@@ -2,6 +2,9 @@ const { withAxiom } = require('next-axiom')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverActions: true,
+  },
   webpack: (config, { isServer }) => {
     config.resolve.fallback = {
       fs: false,
