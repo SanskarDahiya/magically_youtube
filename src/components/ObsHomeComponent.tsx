@@ -131,7 +131,7 @@ function ObsHomeComponent({
 
   return (
     <div className="h-screen w-screen bg-transparent text-2xl flex justify-start items-center p-4 text-black">
-      {/* {!isStreamerHasCampaignId && !isStreaming.current ? (
+      {!isStreamerHasCampaignId && !isStreaming.current ? (
         <>
           <div className="absolute top-[25%] left-0 bg-[rgba(0,0,0,0.2)] px-4 py-8 rounded text-[22px]">
             Thank you for participation.
@@ -141,7 +141,7 @@ function ObsHomeComponent({
         </>
       ) : (
         <></>
-      )} */}
+      )}
       <img
         src={LogoImg.src}
         alt="logo"
