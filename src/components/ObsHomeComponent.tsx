@@ -104,7 +104,7 @@ function ObsHomeComponent({
       JSON.stringify({
         title: 'Will make server update API CALL',
         IS_MAKING_API_CALL:
-          !isStreaming.current || !isStreamerHasCampaignId ? 'YES' : 'NO',
+          !isStreaming.current || !isStreamerHasCampaignId ? 'NO' : 'YES',
         __params: {
           timestamp: timestampValue,
           isActive: isObsSourceActive.current,
@@ -142,7 +142,7 @@ function ObsHomeComponent({
       ) : (
         <></>
       )}
-      <img
+      {/* <img
         src={LogoImg.src}
         alt="logo"
         height={200}
@@ -150,7 +150,7 @@ function ObsHomeComponent({
         className={`${
           showLogo ? 'opacity-100' : 'opacity-0'
         } transition-opacity ease-in-out duration-1000 bg-black`}
-      />
+      /> */}
     </div>
   )
 }
